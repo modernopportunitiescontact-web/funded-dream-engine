@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { TrendingUp, Mail, MapPin } from "lucide-react";
+import { Mail } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 
 const Footer = () => {
   return (
@@ -8,17 +9,12 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
           {/* Brand */}
           <div className="md:col-span-2">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <span className="font-display font-bold text-xl">
-                The Best <span className="text-gradient-gold">Propfirm</span>
-              </span>
-            </Link>
+            <div className="mb-4">
+              <BrandLogo size="md" linkTo="/" />
+            </div>
             <p className="text-muted-foreground text-sm max-w-md mb-4">
-              Votre partenaire vers le trading professionnel. Prouvez vos compétences 
-              et accédez à un compte financé pour trader sans risque personnel.
+              Nous finançons le talent. Prouvez vos compétences de trading et accédez 
+              à un capital allant jusqu'à 500,000$ sans risque personnel.
             </p>
             <div className="flex items-center gap-2 text-muted-foreground text-sm">
               <Mail className="w-4 h-4" />
@@ -37,7 +33,7 @@ const Footer = () => {
               </li>
               <li>
                 <a href="#phases" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-                  Phases d'évaluation
+                  Comment ça marche
                 </a>
               </li>
               <li>
@@ -50,6 +46,11 @@ const Footer = () => {
                   FAQ
                 </a>
               </li>
+              <li>
+                <Link to="/rules" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
+                  Rules & Conditions
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -59,17 +60,32 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <Link to="/terms" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-                  Conditions générales
+                  Terms & Conditions
                 </Link>
               </li>
               <li>
                 <Link to="/privacy" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-                  Politique de confidentialité
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/risk-disclosure" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
+                  Risk Disclosure
                 </Link>
               </li>
               <li>
                 <Link to="/refund" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
-                  Politique de remboursement
+                  Refund Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/aml-kyc" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
+                  AML & KYC Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/disclaimer" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
+                  Trading Disclaimer
                 </Link>
               </li>
             </ul>
@@ -79,7 +95,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-sm">
-            © 2024 The Best Propfirm. Tous droits réservés.
+            © 2024 The BEST Propfirm. Tous droits réservés.
           </p>
           <div className="flex items-center gap-4">
             <span className="text-muted-foreground text-sm">Propulsé par MetaTrader 5</span>
@@ -90,8 +106,9 @@ const Footer = () => {
         <div className="mt-8 p-4 bg-muted/50 rounded-xl">
           <p className="text-xs text-muted-foreground text-center">
             <strong>Avertissement sur les risques :</strong> Le trading sur les marchés financiers 
-            comporte des risques significatifs. Les performances passées ne garantissent pas les 
-            résultats futurs. Tradez de manière responsable.
+            comporte des risques significatifs de perte. Les performances passées ne garantissent pas les 
+            résultats futurs. Tous les comptes fournis sont des comptes démo destinés à l'évaluation des compétences. 
+            Les frais de challenge ne sont pas remboursables. Tradez de manière responsable.
           </p>
         </div>
       </div>

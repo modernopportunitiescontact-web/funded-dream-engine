@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Shield, TrendingUp, Zap } from "lucide-react";
+import { ArrowRight, Shield, TrendingUp, Zap, Award, Users } from "lucide-react";
+import { pricingTiers } from "@/lib/pricing-data";
 
 const Hero = () => {
   return (
@@ -22,55 +23,60 @@ const Hero = () => {
       />
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-5xl mx-auto text-center">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 mb-8 animate-fade-in">
-            <Zap className="w-4 h-4 text-primary" />
-            <span className="text-sm text-primary font-medium">Nouvelle ère du trading</span>
+            <Award className="w-4 h-4 text-primary" />
+            <span className="text-sm text-primary font-medium">Nous finançons le talent</span>
           </div>
 
           {/* Main Heading */}
           <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-slide-up">
-            Devenez un{" "}
-            <span className="text-gradient-gold">Trader Financé</span>
-            <br />
-            Sans Risque Personnel
+            Votre Discipline Devient{" "}
+            <br className="hidden md:block" />
+            <span className="text-gradient-gold">Votre Capital</span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-slide-up" style={{ animationDelay: "0.1s" }}>
-            Prouvez vos compétences de trading sur nos phases d'évaluation et accédez 
-            à un compte financé avec un capital de départ. Tradez nos fonds, gardez vos profits.
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-6 animate-slide-up" style={{ animationDelay: "0.1s" }}>
+            The <span className="font-bold text-foreground">BEST</span> Propfirm vous offre l'opportunité de prouver vos compétences de trading et d'accéder à un capital allant jusqu'à <span className="text-primary font-semibold">500,000$</span>. Pas besoin d'avoir beaucoup d'argent pour trader gros.
           </p>
+
+          {/* Key Messages */}
+          <div className="flex flex-wrap items-center justify-center gap-4 mb-10 animate-slide-up" style={{ animationDelay: "0.15s" }}>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Shield className="w-4 h-4 text-success" />
+              <span>Système équitable basé sur la performance</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Users className="w-4 h-4 text-primary" />
+              <span>Une opportunité pour les traders sérieux</span>
+            </div>
+          </div>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-slide-up" style={{ animationDelay: "0.2s" }}>
             <Link to="/register">
               <Button variant="hero" size="xl" className="group">
-                Commencer l'évaluation
+                Choisissez votre capital
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
             <a href="#phases">
               <Button variant="hero-outline" size="xl">
-                Voir les phases
+                Comment ça marche
               </Button>
             </a>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 animate-slide-up" style={{ animationDelay: "0.3s" }}>
-            {[
-              { value: "3,000$", label: "Capital Initial" },
-              { value: "32$", label: "Frais d'inscription" },
-              { value: "10%", label: "Objectif Retrait" },
-              { value: "24/7", label: "Support" },
-            ].map((stat, index) => (
-              <div key={index} className="glass-card p-4 md:p-6">
-                <div className="font-display text-2xl md:text-3xl font-bold text-gradient-gold mb-1">
-                  {stat.value}
+          {/* Stats - Updated with multiple tiers */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 animate-slide-up" style={{ animationDelay: "0.3s" }}>
+            {pricingTiers.map((tier, index) => (
+              <div key={index} className={`glass-card p-4 ${tier.popular ? 'border-primary/50 gold-glow' : ''}`}>
+                <div className="font-display text-xl md:text-2xl font-bold text-gradient-gold mb-1">
+                  {tier.capitalFormatted}
                 </div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
+                <div className="text-xs text-muted-foreground">à partir de {tier.feeFormatted}</div>
               </div>
             ))}
           </div>
@@ -80,7 +86,7 @@ const Hero = () => {
         <div className="flex flex-wrap items-center justify-center gap-6 mt-16 animate-fade-in" style={{ animationDelay: "0.4s" }}>
           <div className="flex items-center gap-2 text-muted-foreground">
             <Shield className="w-5 h-5 text-success" />
-            <span className="text-sm">Paiements Sécurisés</span>
+            <span className="text-sm">Paiement Crypto USDT</span>
           </div>
           <div className="flex items-center gap-2 text-muted-foreground">
             <TrendingUp className="w-5 h-5 text-primary" />
@@ -88,7 +94,7 @@ const Hero = () => {
           </div>
           <div className="flex items-center gap-2 text-muted-foreground">
             <Zap className="w-5 h-5 text-accent" />
-            <span className="text-sm">Exécution Instantanée</span>
+            <span className="text-sm">Activation sous 24h</span>
           </div>
         </div>
       </div>
