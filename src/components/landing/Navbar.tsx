@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, TrendingUp } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,14 +12,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <span className="font-display font-bold text-xl text-foreground">
-              The Best <span className="text-gradient-gold">Propfirm</span>
-            </span>
-          </Link>
+          <BrandLogo size="md" />
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">
@@ -34,6 +28,9 @@ const Navbar = () => {
             <a href="#faq" className="text-muted-foreground hover:text-foreground transition-colors">
               FAQ
             </a>
+            <Link to="/rules" className="text-muted-foreground hover:text-foreground transition-colors">
+              Rules
+            </Link>
           </div>
 
           {/* CTA Buttons */}
@@ -71,6 +68,9 @@ const Navbar = () => {
               <a href="#faq" className="text-muted-foreground hover:text-foreground transition-colors py-2">
                 FAQ
               </a>
+              <Link to="/rules" className="text-muted-foreground hover:text-foreground transition-colors py-2">
+                Rules
+              </Link>
               <div className="flex flex-col gap-2 pt-4 border-t border-border/50">
                 <Link to="/login">
                   <Button variant="ghost" className="w-full">Connexion</Button>

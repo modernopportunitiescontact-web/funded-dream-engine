@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { TrendingUp, Mail, Lock, ArrowLeft } from "lucide-react";
+import { Mail, Lock, ArrowLeft } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -38,13 +39,8 @@ const Login = () => {
         {/* Login Card */}
         <div className="glass-card p-8">
           {/* Logo */}
-          <div className="flex items-center justify-center gap-2 mb-8">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <TrendingUp className="w-7 h-7 text-primary-foreground" />
-            </div>
-            <span className="font-display font-bold text-2xl">
-              The Best <span className="text-gradient-gold">Propfirm</span>
-            </span>
+          <div className="flex items-center justify-center mb-8">
+            <BrandLogo size="lg" linkTo="/" />
           </div>
 
           {/* Title */}

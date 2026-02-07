@@ -3,18 +3,18 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
   TrendingUp, 
-  TrendingDown, 
   Wallet, 
   Target, 
   AlertTriangle,
   History,
-  LogOut,
-  Settings,
   ChevronDown,
   ArrowUpRight,
   ArrowDownRight,
-  Clock
+  Clock,
+  DollarSign
 } from "lucide-react";
+import BrandLogo from "@/components/BrandLogo";
+import { tradingRules } from "@/lib/pricing-data";
 
 // Mock data for demo
 const mockTraderData = {
@@ -22,19 +22,20 @@ const mockTraderData = {
   email: "jean.dupont@email.com",
   phase: "Phase 1",
   accountType: "Synthetic",
-  balance: 3000,
-  equity: 3045,
-  profit: 45,
+  capital: 50000,
+  balance: 50000,
+  equity: 50750,
+  profit: 750,
   profitPercent: 1.5,
-  targetPercent: 3,
+  targetPercent: tradingRules.phase1.profitTarget,
   drawdown: 0.3,
-  maxDrawdown: 1,
+  maxDrawdown: tradingRules.phase1.maxDrawdown,
   status: "active",
   mt5Login: "12345678",
   trades: [
-    { id: 1, pair: "Volatility 75 Index", type: "buy", volume: 0.1, profit: 25.50, time: "2024-01-15 14:32" },
-    { id: 2, pair: "Volatility 100 Index", type: "sell", volume: 0.05, profit: -12.30, time: "2024-01-15 10:15" },
-    { id: 3, pair: "Volatility 50 Index", type: "buy", volume: 0.2, profit: 31.80, time: "2024-01-14 16:45" },
+    { id: 1, pair: "Volatility 75 Index", type: "buy", volume: 0.5, profit: 425.50, time: "2024-01-15 14:32" },
+    { id: 2, pair: "Volatility 100 Index", type: "sell", volume: 0.25, profit: -123.30, time: "2024-01-15 10:15" },
+    { id: 3, pair: "Volatility 50 Index", type: "buy", volume: 1.0, profit: 447.80, time: "2024-01-14 16:45" },
   ]
 };
 
@@ -43,6 +44,7 @@ const Dashboard = () => {
   
   const profitProgress = (trader.profitPercent / trader.targetPercent) * 100;
   const drawdownProgress = (trader.drawdown / trader.maxDrawdown) * 100;
+  const canWithdraw = trader.phase === "Funded" && trader.profitPercent >= tradingRules.funded.withdrawalTarget;
 
   return (
     <div className="min-h-screen bg-background">
@@ -51,14 +53,7 @@ const Dashboard = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="font-display font-bold text-lg hidden md:block">
-                The Best <span className="text-gradient-gold">Propfirm</span>
-              </span>
-            </Link>
+            <BrandLogo size="sm" linkTo="/" />
 
             {/* Phase Badge */}
             <div className="flex items-center gap-4">
@@ -86,9 +81,35 @@ const Dashboard = () => {
             Bienvenue, <span className="text-gradient-gold">{trader.name}</span>
           </h1>
           <p className="text-muted-foreground">
-            Votre tableau de bord de trading • {trader.accountType}
+            Votre tableau de bord • {trader.accountType} • Capital: ${trader.capital.toLocaleString()}
           </p>
         </div>
+
+        {/* Withdrawal Button (for Funded accounts) */}
+        {trader.phase === "Funded" && (
+          <div className={`mb-6 p-4 rounded-xl ${canWithdraw ? 'bg-success/10 border border-success/30' : 'bg-secondary/50'}`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold flex items-center gap-2">
+                  <DollarSign className="w-5 h-5 text-success" />
+                  Retrait
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {canWithdraw 
+                    ? "Vous êtes éligible au retrait !" 
+                    : `Atteignez +${tradingRules.funded.withdrawalTarget}% de profit pour demander un retrait`
+                  }
+                </p>
+              </div>
+              <Button 
+                variant={canWithdraw ? "hero" : "ghost"} 
+                disabled={!canWithdraw}
+              >
+                Demander un retrait
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
