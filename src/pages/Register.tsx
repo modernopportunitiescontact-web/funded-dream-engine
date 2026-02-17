@@ -32,7 +32,11 @@ const Register = () => {
   const [step, setStep] = useState<"form" | "payment">("form");
   const [copied, setCopied] = useState(false);
 
-  const USDT_ADDRESS = "TXxxxxxxxxxxxxxxxxxxxxxxxxxxx"; // Replace with actual USDT TRC20 address
+  const USDT_TRC20_ADDRESS = "TX9RsjbnpyMNVxWgRuYwNdoekwzrt13U3v";
+  const USDT_BEP20_ADDRESS = "0xfdddc862cb908824a326da08ee29c7c6c632b501";
+  const [selectedNetwork, setSelectedNetwork] = useState<"trc20" | "bep20">("trc20");
+
+  const activeAddress = selectedNetwork === "trc20" ? USDT_TRC20_ADDRESS : USDT_BEP20_ADDRESS;
 
   useEffect(() => {
     const capitalParam = searchParams.get("capital");
@@ -56,7 +60,7 @@ const Register = () => {
   };
 
   const copyAddress = () => {
-    navigator.clipboard.writeText(USDT_ADDRESS);
+    navigator.clipboard.writeText(activeAddress);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -286,7 +290,7 @@ const Register = () => {
               <div className="text-center mb-6">
                 <h1 className="font-display text-2xl font-bold mb-2">Paiement</h1>
                 <p className="text-muted-foreground text-sm">
-                  Effectuez le paiement en USDT (TRC20)
+                  Effectuez le paiement en USDT via Binance
                 </p>
               </div>
 
@@ -312,13 +316,39 @@ const Register = () => {
 
               {/* USDT Address */}
               <div className="space-y-4">
+                {/* Network Selection */}
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedNetwork("trc20")}
+                    className={`flex-1 p-3 rounded-xl border text-center text-sm font-medium transition-all ${
+                      selectedNetwork === "trc20"
+                        ? "border-primary bg-primary/10 text-foreground"
+                        : "border-border bg-secondary/30 text-muted-foreground hover:border-primary/50"
+                    }`}
+                  >
+                    USDT TRC20
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedNetwork("bep20")}
+                    className={`flex-1 p-3 rounded-xl border text-center text-sm font-medium transition-all ${
+                      selectedNetwork === "bep20"
+                        ? "border-primary bg-primary/10 text-foreground"
+                        : "border-border bg-secondary/30 text-muted-foreground hover:border-primary/50"
+                    }`}
+                  >
+                    USDT BEP20
+                  </button>
+                </div>
+
                 <div className="p-4 bg-secondary/50 rounded-xl">
                   <div className="text-sm text-muted-foreground mb-2">
-                    Adresse USDT (TRC20)
+                    Adresse USDT ({selectedNetwork.toUpperCase()}) — Binance
                   </div>
                   <div className="flex items-center gap-2">
                     <code className="flex-1 text-xs bg-background p-2 rounded break-all">
-                      {USDT_ADDRESS}
+                      {activeAddress}
                     </code>
                     <Button
                       variant="ghost"
@@ -339,7 +369,7 @@ const Register = () => {
                   <h3 className="font-semibold text-sm mb-2">Instructions :</h3>
                   <ul className="text-sm text-muted-foreground space-y-1">
                     <li>1. Envoyez exactement <span className="text-foreground font-medium">{selectedTier?.feeFormatted} USDT</span> à l'adresse ci-dessus</li>
-                    <li>2. Utilisez uniquement le réseau <span className="text-foreground font-medium">TRC20</span></li>
+                    <li>2. Utilisez uniquement le réseau <span className="text-foreground font-medium">{selectedNetwork.toUpperCase()}</span></li>
                     <li>3. Votre compte sera activé sous 24h après vérification</li>
                     <li>4. Vos identifiants MT5 seront envoyés par email</li>
                   </ul>

@@ -41,7 +41,7 @@ const faqs = [
   },
   {
     question: "Quels sont les moyens de paiement ?",
-    answer: "Actuellement, nous acceptons uniquement les paiements en crypto USDT (réseau TRC20). D'autres méthodes de paiement seront ajoutées prochainement.",
+    answer: "Actuellement, nous acceptons les paiements en crypto USDT via Binance (réseaux TRC20 et BEP20). D'autres méthodes de paiement seront ajoutées prochainement.",
   },
   {
     question: "Puis-je utiliser un robot ou EA ?",
