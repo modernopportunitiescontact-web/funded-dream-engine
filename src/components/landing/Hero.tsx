@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Shield, TrendingUp, Zap, Award, Users } from "lucide-react";
 import { pricingTiers } from "@/lib/pricing-data";
+import tradingSetup from "@/assets/trading-setup.jpeg";
+import tradingTablet from "@/assets/trading-tablet.jpeg";
 
 const Hero = () => {
   return (
@@ -55,7 +57,7 @@ const Hero = () => {
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-slide-up" style={{ animationDelay: "0.2s" }}>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 animate-slide-up" style={{ animationDelay: "0.2s" }}>
             <Link to="/register">
               <Button variant="hero" size="xl" className="group">
                 Choisissez votre capital
@@ -69,7 +71,29 @@ const Hero = () => {
             </a>
           </div>
 
-          {/* Stats - Updated with multiple tiers */}
+          {/* Trading Setup Image */}
+          <div className="relative mb-12 animate-slide-up" style={{ animationDelay: "0.25s" }}>
+            <div className="relative mx-auto max-w-4xl rounded-2xl overflow-hidden border border-border/50 gold-glow">
+              <img 
+                src={tradingSetup} 
+                alt="Setup de trading professionnel avec plusieurs écrans" 
+                className="w-full h-64 md:h-80 object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                <span className="text-sm font-medium text-foreground/80">Environnement de trading professionnel</span>
+                <img 
+                  src={tradingTablet} 
+                  alt="Trading sur tablette" 
+                  className="w-20 h-20 md:w-28 md:h-28 object-cover rounded-xl border border-border/50 shadow-lg"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 animate-slide-up" style={{ animationDelay: "0.3s" }}>
             {pricingTiers.map((tier, index) => (
               <div key={index} className={`glass-card p-4 ${tier.popular ? 'border-primary/50 gold-glow' : ''}`}>
