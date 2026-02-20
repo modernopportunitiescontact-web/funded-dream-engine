@@ -1,21 +1,60 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, ArrowLeft } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { signIn, isAdmin } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // TODO: Implement login logic with Supabase
-    setTimeout(() => setIsLoading(false), 1000);
+    
+    const { error } = await signIn(email, password);
+    
+    if (error) {
+      toast({
+        title: "Erreur de connexion",
+        description: error.message === "Invalid login credentials" 
+          ? "Email ou mot de passe incorrect" 
+          : error.message,
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    toast({ title: "Connexion réussie", description: "Bienvenue !" });
+    
+    // Small delay to let auth state update
+    setTimeout(() => {
+      // Check admin role via supabase directly since state may not be updated yet
+      import("@/integrations/supabase/client").then(({ supabase }) => {
+        supabase.auth.getUser().then(({ data: { user } }) => {
+          if (user) {
+            supabase
+              .from("user_roles")
+              .select("role")
+              .eq("user_id", user.id)
+              .eq("role", "admin")
+              .maybeSingle()
+              .then(({ data }) => {
+                navigate(data ? "/admin" : "/dashboard");
+              });
+          }
+        });
+      });
+    }, 500);
   };
 
   return (
@@ -27,7 +66,6 @@ const Login = () => {
       </div>
 
       <div className="w-full max-w-md relative z-10">
-        {/* Back Link */}
         <Link 
           to="/" 
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8"
@@ -36,22 +74,16 @@ const Login = () => {
           Retour à l'accueil
         </Link>
 
-        {/* Login Card */}
         <div className="glass-card p-8">
-          {/* Logo */}
           <div className="flex items-center justify-center mb-8">
             <BrandLogo size="lg" linkTo="/" />
           </div>
 
-          {/* Title */}
           <div className="text-center mb-8">
             <h1 className="font-display text-2xl font-bold mb-2">Connexion</h1>
-            <p className="text-muted-foreground">
-              Accédez à votre dashboard trader
-            </p>
+            <p className="text-muted-foreground">Accédez à votre dashboard trader</p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -85,16 +117,6 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" className="rounded border-border" />
-                <span className="text-sm text-muted-foreground">Se souvenir de moi</span>
-              </label>
-              <Link to="/forgot-password" className="text-sm text-primary hover:underline">
-                Mot de passe oublié ?
-              </Link>
-            </div>
-
             <Button 
               type="submit" 
               variant="hero" 
@@ -106,7 +128,6 @@ const Login = () => {
             </Button>
           </form>
 
-          {/* Register Link */}
           <p className="text-center mt-6 text-muted-foreground">
             Pas encore de compte ?{" "}
             <Link to="/register" className="text-primary hover:underline font-medium">

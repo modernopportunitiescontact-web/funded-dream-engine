@@ -8,27 +8,35 @@ import {
   Clock,
   Target
 } from "lucide-react";
+import tradingScreens from "@/assets/trading-screens.jpeg";
+import tradingGrowth from "@/assets/trading-growth.jpeg";
+import tradingCandlestick from "@/assets/trading-candlestick.jpeg";
+import tradingChartCircle from "@/assets/trading-chart-circle.jpeg";
 
 const features = [
   {
     icon: Wallet,
     title: "Capital de 3,000$",
     description: "Commencez à trader avec un capital conséquent dès la première phase d'évaluation.",
+    image: tradingGrowth,
   },
   {
     icon: Copy,
     title: "Copy Trading Automatique",
     description: "Vos trades sont copiés automatiquement sur nos comptes réels en arrière-plan.",
+    image: tradingScreens,
   },
   {
     icon: BarChart3,
     title: "Suivi en Temps Réel",
     description: "Dashboard complet avec suivi de vos performances, drawdown et objectifs.",
+    image: tradingChartCircle,
   },
   {
     icon: Shield,
     title: "Zéro Risque Personnel",
     description: "Tradez sans risquer votre propre capital. Nous assumons le risque.",
+    image: tradingCandlestick,
   },
   {
     icon: Target,
@@ -72,17 +80,29 @@ const Features = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="glass-card p-6 group hover:border-primary/50 transition-all duration-300"
+              className="glass-card group hover:border-primary/50 transition-all duration-300 overflow-hidden"
             >
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                <feature.icon className="w-6 h-6 text-primary" />
+              {feature.image && (
+                <div className="h-32 overflow-hidden">
+                  <img 
+                    src={feature.image} 
+                    alt={feature.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                </div>
+              )}
+              <div className="p-6">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                  <feature.icon className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="font-display text-lg font-semibold mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-muted-foreground text-sm">
+                  {feature.description}
+                </p>
               </div>
-              <h3 className="font-display text-lg font-semibold mb-2">
-                {feature.title}
-              </h3>
-              <p className="text-muted-foreground text-sm">
-                {feature.description}
-              </p>
             </div>
           ))}
         </div>

@@ -1,5 +1,8 @@
 import { Check, ArrowRight, TrendingUp, AlertTriangle, Trophy } from "lucide-react";
 import { tradingRules } from "@/lib/pricing-data";
+import tradingJustice from "@/assets/trading-justice.jpeg";
+import tradingMonitors from "@/assets/trading-monitors.jpeg";
+import tradingDarkScreens from "@/assets/trading-dark-screens.jpeg";
 
 const phases = [
   {
@@ -18,6 +21,7 @@ const phases = [
     ],
     icon: TrendingUp,
     color: "primary",
+    image: tradingJustice,
   },
   {
     phase: "Phase 2",
@@ -36,6 +40,7 @@ const phases = [
     highlighted: true,
     icon: TrendingUp,
     color: "accent",
+    image: tradingMonitors,
   },
   {
     phase: "Funded",
@@ -53,6 +58,7 @@ const phases = [
     ],
     icon: Trophy,
     color: "success",
+    image: tradingDarkScreens,
   },
 ];
 
@@ -73,7 +79,6 @@ const Phases = () => {
 
         {/* Phases Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-4 relative">
-          {/* Connection Lines (Desktop) */}
           <div className="hidden lg:block absolute top-1/2 left-1/3 right-1/3 h-0.5 bg-border -translate-y-1/2 z-0" />
           
           {phases.map((phase, index) => {
@@ -81,67 +86,72 @@ const Phases = () => {
             return (
               <div
                 key={index}
-                className={`glass-card p-6 md:p-8 relative z-10 ${
-                  phase.highlighted
-                    ? "border-primary/50 gold-glow"
-                    : ""
+                className={`glass-card relative z-10 overflow-hidden ${
+                  phase.highlighted ? "border-primary/50 gold-glow" : ""
                 }`}
               >
                 {phase.highlighted && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-gold rounded-full text-xs font-bold text-primary-foreground">
+                  <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 px-4 py-1 bg-gradient-gold rounded-full text-xs font-bold text-primary-foreground">
                     ÉTAPE CLÉ
                   </div>
                 )}
 
-                {/* Phase Badge */}
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                    phase.color === "success" ? "bg-success/20 text-success" : 
-                    phase.color === "accent" ? "bg-accent/20 text-accent" :
-                    "bg-primary/20 text-primary"
-                  }`}>
-                    <IconComponent className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <span className="text-sm text-muted-foreground">{phase.phase}</span>
-                    <h3 className="font-display text-xl font-bold">{phase.title}</h3>
-                  </div>
+                {/* Phase Image */}
+                <div className="h-40 overflow-hidden relative">
+                  <img 
+                    src={phase.image} 
+                    alt={phase.title}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent" />
                 </div>
 
-                {/* Subtitle */}
-                <p className="text-primary font-medium mb-4">{phase.subtitle}</p>
-
-                {/* Stats */}
-                <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-background/50 rounded-xl">
-                  <div>
-                    <div className="text-sm text-muted-foreground mb-1">Objectif</div>
-                    <div className="font-display text-xl font-bold text-success">{phase.profitTarget}</div>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground mb-1">
-                      <AlertTriangle className="w-3 h-3 text-destructive" />
-                      <span>Drawdown max</span>
+                <div className="p-6 md:p-8">
+                  {/* Phase Badge */}
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                      phase.color === "success" ? "bg-success/20 text-success" : 
+                      phase.color === "accent" ? "bg-accent/20 text-accent" :
+                      "bg-primary/20 text-primary"
+                    }`}>
+                      <IconComponent className="w-6 h-6" />
                     </div>
-                    <div className="font-display text-xl font-bold text-destructive">{phase.maxDrawdown}</div>
+                    <div>
+                      <span className="text-sm text-muted-foreground">{phase.phase}</span>
+                      <h3 className="font-display text-xl font-bold">{phase.title}</h3>
+                    </div>
                   </div>
+
+                  <p className="text-primary font-medium mb-4">{phase.subtitle}</p>
+
+                  {/* Stats */}
+                  <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-background/50 rounded-xl">
+                    <div>
+                      <div className="text-sm text-muted-foreground mb-1">Objectif</div>
+                      <div className="font-display text-xl font-bold text-success">{phase.profitTarget}</div>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground mb-1">
+                        <AlertTriangle className="w-3 h-3 text-destructive" />
+                        <span>Drawdown max</span>
+                      </div>
+                      <div className="font-display text-xl font-bold text-destructive">{phase.maxDrawdown}</div>
+                    </div>
+                  </div>
+
+                  <p className="text-muted-foreground text-sm mb-6">{phase.description}</p>
+
+                  <ul className="space-y-3">
+                    {phase.features.map((feature, featureIndex) => (
+                      <li key={featureIndex} className="flex items-start gap-2 text-sm">
+                        <Check className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
-                {/* Description */}
-                <p className="text-muted-foreground text-sm mb-6">
-                  {phase.description}
-                </p>
-
-                {/* Features */}
-                <ul className="space-y-3">
-                  {phase.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-start gap-2 text-sm">
-                      <Check className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* Arrow (except last) */}
                 {index < phases.length - 1 && (
                   <div className="hidden lg:flex absolute -right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-background border border-border rounded-full items-center justify-center">
                     <ArrowRight className="w-5 h-5 text-primary" />
@@ -152,7 +162,6 @@ const Phases = () => {
           })}
         </div>
 
-        {/* Bottom Message */}
         <div className="text-center mt-12">
           <p className="text-muted-foreground">
             <span className="text-primary font-semibold">Pas besoin de capital</span> pour commencer.{" "}
