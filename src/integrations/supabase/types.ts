@@ -14,6 +14,92 @@ export type Database = {
   }
   public: {
     Tables: {
+      copy_links: {
+        Row: {
+          copy_settings: Json | null
+          created_at: string
+          id: string
+          master_registration_id: string
+          slave_registration_id: string
+          status: string
+        }
+        Insert: {
+          copy_settings?: Json | null
+          created_at?: string
+          id?: string
+          master_registration_id: string
+          slave_registration_id: string
+          status?: string
+        }
+        Update: {
+          copy_settings?: Json | null
+          created_at?: string
+          id?: string
+          master_registration_id?: string
+          slave_registration_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "copy_links_master_registration_id_fkey"
+            columns: ["master_registration_id"]
+            isOneToOne: false
+            referencedRelation: "registrations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "copy_links_slave_registration_id_fkey"
+            columns: ["slave_registration_id"]
+            isOneToOne: false
+            referencedRelation: "registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mt5_accounts: {
+        Row: {
+          account_type: string
+          created_at: string
+          id: string
+          mt5_login: string | null
+          mt5_password: string | null
+          mt5_server: string | null
+          registration_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          account_type?: string
+          created_at?: string
+          id?: string
+          mt5_login?: string | null
+          mt5_password?: string | null
+          mt5_server?: string | null
+          registration_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          account_type?: string
+          created_at?: string
+          id?: string
+          mt5_login?: string | null
+          mt5_password?: string | null
+          mt5_server?: string | null
+          registration_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mt5_accounts_registration_id_fkey"
+            columns: ["registration_id"]
+            isOneToOne: true
+            referencedRelation: "registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -94,27 +180,66 @@ export type Database = {
       registrations: {
         Row: {
           account_type: string
+          amount_paid: number | null
           capital_tier: string
+          country: string | null
           created_at: string
+          email: string | null
+          fee_expected: number | null
+          full_name: string | null
           id: string
+          notes: string | null
+          paid_at: string | null
+          payment_address_used: string | null
+          payment_method: string | null
+          payment_status: string
+          payment_txid: string | null
+          phone: string | null
+          plan_capital: number | null
           status: string
           updated_at: string
           user_id: string
         }
         Insert: {
           account_type?: string
+          amount_paid?: number | null
           capital_tier: string
+          country?: string | null
           created_at?: string
+          email?: string | null
+          fee_expected?: number | null
+          full_name?: string | null
           id?: string
+          notes?: string | null
+          paid_at?: string | null
+          payment_address_used?: string | null
+          payment_method?: string | null
+          payment_status?: string
+          payment_txid?: string | null
+          phone?: string | null
+          plan_capital?: number | null
           status?: string
           updated_at?: string
           user_id: string
         }
         Update: {
           account_type?: string
+          amount_paid?: number | null
           capital_tier?: string
+          country?: string | null
           created_at?: string
+          email?: string | null
+          fee_expected?: number | null
+          full_name?: string | null
           id?: string
+          notes?: string | null
+          paid_at?: string | null
+          payment_address_used?: string | null
+          payment_method?: string | null
+          payment_status?: string
+          payment_txid?: string | null
+          phone?: string | null
+          plan_capital?: number | null
           status?: string
           updated_at?: string
           user_id?: string
