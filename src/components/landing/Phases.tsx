@@ -15,7 +15,7 @@ const phases = [
     features: [
       `Objectif de profit: +${tradingRules.phase1.profitTarget}%`,
       `Drawdown maximum: ${tradingRules.phase1.maxDrawdown}%`,
-      "Pas de limite de temps",
+      "28 jours maximum",
       "Tous styles de trading acceptés",
       "Passage automatique si objectif atteint",
     ],
@@ -33,7 +33,7 @@ const phases = [
     features: [
       `Objectif de profit: +${tradingRules.phase2.profitTarget}%`,
       `Drawdown maximum: ${tradingRules.phase2.maxDrawdown}%`,
-      "Pas de limite de temps",
+      "28 jours maximum",
       "Mêmes règles de trading",
       "Accès au compte Funded si réussi",
     ],
@@ -53,6 +53,7 @@ const phases = [
       "Capital financé par The BEST Propfirm",
       `Retrait possible à +${tradingRules.funded.withdrawalTarget}% de profit`,
       `Drawdown maximum: ${tradingRules.funded.maxDrawdown}%`,
+      "Aucune limite de temps",
       "Retraits illimités",
       "Nouveau compte après chaque retrait",
     ],
