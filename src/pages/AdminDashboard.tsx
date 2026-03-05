@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { TrendingUp, Users, DollarSign, Clock, ArrowUpRight, Wallet, RefreshCw } from "lucide-react";
+import { TrendingUp, Users, DollarSign, Clock, ArrowUpRight, Wallet, RefreshCw, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
