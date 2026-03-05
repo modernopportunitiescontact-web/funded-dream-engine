@@ -12,22 +12,27 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, isAdmin } = useAuth();
+  const { signIn } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     const { error } = await signIn(email, password);
-    
+
     if (error) {
+      const message =
+        error.message === "Invalid login credentials"
+          ? "Email ou mot de passe incorrect"
+          : error.message.toLowerCase().includes("email not confirmed")
+            ? "Veuillez confirmer votre email avant de vous connecter"
+            : error.message;
+
       toast({
         title: "Erreur de connexion",
-        description: error.message === "Invalid login credentials" 
-          ? "Email ou mot de passe incorrect" 
-          : error.message,
+        description: message,
         variant: "destructive",
       });
       setIsLoading(false);
@@ -35,26 +40,25 @@ const Login = () => {
     }
 
     toast({ title: "Connexion réussie", description: "Bienvenue !" });
-    
-    // Small delay to let auth state update
-    setTimeout(() => {
-      // Check admin role via supabase directly since state may not be updated yet
-      import("@/integrations/supabase/client").then(({ supabase }) => {
-        supabase.auth.getUser().then(({ data: { user } }) => {
-          if (user) {
-            supabase
-              .from("user_roles")
-              .select("role")
-              .eq("user_id", user.id)
-              .eq("role", "admin")
-              .maybeSingle()
-              .then(({ data }) => {
-                navigate(data ? "/admin" : "/dashboard");
-              });
-          }
-        });
-      });
-    }, 500);
+
+    const { supabase } = await import("@/integrations/supabase/client");
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      setIsLoading(false);
+      navigate("/dashboard");
+      return;
+    }
+
+    const { data: adminRole } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    setIsLoading(false);
+    navigate(adminRole ? "/admin" : "/dashboard");
   };
 
   return (

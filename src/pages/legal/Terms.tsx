@@ -57,7 +57,7 @@ const Terms = () => {
               <li>Profit Target: 3%</li>
               <li>Maximum Drawdown: 1%</li>
               <li>Objective: Demonstrate discipline and risk management</li>
-              <li>No time limit</li>
+              <li>28 jours maximum</li>
             </ul>
 
             <h3 className="font-semibold text-foreground mt-6 mb-3">Phase 2 - Advanced Evaluation</h3>
@@ -65,7 +65,7 @@ const Terms = () => {
               <li>Profit Target: 9%</li>
               <li>Maximum Drawdown: 3%</li>
               <li>Objective: Confirm consistency and risk mastery</li>
-              <li>No time limit</li>
+              <li>28 jours maximum</li>
             </ul>
 
             <p className="text-muted-foreground leading-relaxed mt-4">
@@ -78,6 +78,7 @@ const Terms = () => {
             <ul className="list-disc list-inside text-muted-foreground space-y-2">
               <li>Withdrawal Threshold: 10% profit</li>
               <li>Maximum Drawdown: 10%</li>
+              <li>No time limit</li>
               <li>Withdrawals are processed manually after validation</li>
               <li>After each withdrawal, a new funded account is issued with the initial capital</li>
             </ul>
