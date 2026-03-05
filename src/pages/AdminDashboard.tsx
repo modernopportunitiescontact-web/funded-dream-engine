@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { TrendingUp, Users, DollarSign, Clock, ArrowUpRight, Wallet, RefreshCw } from "lucide-react";
+import { TrendingUp, Users, DollarSign, Clock, ArrowUpRight, Wallet, RefreshCw, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
@@ -76,10 +76,18 @@ const AdminDashboard = () => {
                 Admin <span className="text-gradient-gold">Dashboard</span>
               </span>
             </Link>
-            <Button variant="outline" size="sm" onClick={loadData} disabled={loading}>
-              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`} />
-              Rafraîchir
-            </Button>
+            <div className="flex items-center gap-2">
+              <Link to="/dashboard">
+                <Button variant="outline" size="sm">
+                  <Eye className="w-4 h-4 mr-2" />
+                  Vue Trader
+                </Button>
+              </Link>
+              <Button variant="outline" size="sm" onClick={loadData} disabled={loading}>
+                <RefreshCw className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+                Rafraîchir
+              </Button>
+            </div>
           </div>
         </div>
       </nav>
