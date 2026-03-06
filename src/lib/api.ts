@@ -156,6 +156,50 @@ export const updateCopyLinkStatus = async (id: string, status: string) => {
   if (error) throw error;
 };
 
+// ──── Multiplier ────
+
+export const updateMasterMultiplier = async (mt5AccountId: string, multiplier: number) => {
+  if (multiplier <= 0) throw new Error("Multiplier must be greater than 0");
+  const { error } = await supabase
+    .from("mt5_accounts")
+    .update({ multiplier } as any)
+    .eq("id", mt5AccountId);
+  if (error) throw error;
+};
+
+export const calculateSlaveLot = (
+  masterLot: number,
+  multiplier: number,
+  minLot = 0.01,
+  maxLot = 100,
+  lotStep = 0.01
+): { lot: number; adjusted: boolean; reason?: string } => {
+  let lot = masterLot * multiplier;
+  let adjusted = false;
+  let reason: string | undefined;
+
+  if (lot < minLot) {
+    lot = minLot;
+    adjusted = true;
+    reason = `Lot ${masterLot * multiplier} below min ${minLot}, normalized to ${minLot}`;
+  } else if (lot > maxLot) {
+    lot = maxLot;
+    adjusted = true;
+    reason = `Lot ${masterLot * multiplier} above max ${maxLot}, normalized to ${maxLot}`;
+  } else {
+    // Normalize to lot step
+    const normalized = Math.round(lot / lotStep) * lotStep;
+    const rounded = parseFloat(normalized.toFixed(8));
+    if (rounded !== lot) {
+      adjusted = true;
+      reason = `Lot ${lot} normalized to step ${lotStep} → ${rounded}`;
+      lot = rounded;
+    }
+  }
+
+  return { lot, adjusted, reason };
+};
+
 // ──── CSV Export ────
 
 export const exportToCSV = (data: Record<string, unknown>[], filename: string) => {
