@@ -1,0 +1,1 @@
+ALTER TABLE public.mt5_accounts ADD COLUMN multiplier numeric NOT NULL DEFAULT 1 CHECK (multiplier > 0);
