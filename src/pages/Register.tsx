@@ -112,10 +112,6 @@ const Register = () => {
   };
 
   const handlePaymentConfirm = async () => {
-    if (!user) {
-      toast({ title: "Veuillez d'abord confirmer votre email et vous connecter", variant: "destructive" });
-      return;
-    }
 
     setIsLoading(true);
     try {
