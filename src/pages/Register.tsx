@@ -120,17 +120,21 @@ const Register = () => {
     setIsLoading(true);
     try {
       const tier = pricingTiers.find(t => t.capital.toString() === formData.capital);
-      await createRegistration({
-        user_id: user.id,
-        full_name: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
-        country: formData.country,
-        account_type: formData.accountType,
-        capital_tier: formData.capital,
-        plan_capital: tier?.capital ?? 0,
-        fee_expected: tier?.fee ?? 0,
-      });
+      if (user) {
+        await createRegistration({
+          user_id: user.id,
+          full_name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          country: formData.country,
+          account_type: formData.accountType,
+          capital_tier: formData.capital,
+          plan_capital: tier?.capital ?? 0,
+          fee_expected: tier?.fee ?? 0,
+        });
+        localStorage.removeItem("pending_registration");
+      }
+      // If user is not logged in yet, data is already in localStorage from signup step
       toast({ title: "Inscription enregistrée !", description: "Votre paiement sera vérifié sous 24h." });
       setStep("done");
     } catch (err: any) {
