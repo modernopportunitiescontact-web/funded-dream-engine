@@ -91,6 +91,17 @@ const Register = () => {
       });
       if (authError) throw authError;
 
+      // Save form data so registration can be created after email verification + login
+      localStorage.setItem("pending_registration", JSON.stringify({
+        full_name: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        country: formData.country,
+        account_type: formData.accountType,
+        capital_tier: formData.capital,
+        plan_capital: selectedTier?.capital ?? 0,
+        fee_expected: selectedTier?.fee ?? 0,
+      }));
       toast({ title: "Compte créé ! Vérifiez votre email pour confirmer." });
       setStep("payment");
     } catch (err: any) {
