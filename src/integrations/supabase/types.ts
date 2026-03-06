@@ -64,6 +64,7 @@ export type Database = {
           mt5_login: string | null
           mt5_password: string | null
           mt5_server: string | null
+          multiplier: number
           registration_id: string
           status: string
           updated_at: string
@@ -75,6 +76,7 @@ export type Database = {
           mt5_login?: string | null
           mt5_password?: string | null
           mt5_server?: string | null
+          multiplier?: number
           registration_id: string
           status?: string
           updated_at?: string
@@ -86,6 +88,7 @@ export type Database = {
           mt5_login?: string | null
           mt5_password?: string | null
           mt5_server?: string | null
+          multiplier?: number
           registration_id?: string
           status?: string
           updated_at?: string
