@@ -25,7 +25,30 @@ const Dashboard = () => {
     const load = async () => {
       setLoading(true);
       try {
-        const reg = await fetchMyRegistration(user.id);
+        // Check for pending registration from signup flow
+        const pendingReg = localStorage.getItem("pending_registration");
+        let reg = await fetchMyRegistration(user.id);
+        
+        if (!reg && pendingReg) {
+          try {
+            const pendingData = JSON.parse(pendingReg);
+            reg = await createRegistration({
+              user_id: user.id,
+              full_name: pendingData.full_name,
+              email: pendingData.email,
+              phone: pendingData.phone,
+              country: pendingData.country,
+              account_type: pendingData.account_type,
+              capital_tier: pendingData.capital_tier,
+              plan_capital: pendingData.plan_capital,
+              fee_expected: pendingData.fee_expected,
+            });
+            localStorage.removeItem("pending_registration");
+          } catch (regErr) {
+            console.error("Failed to create pending registration", regErr);
+          }
+        }
+        
         setRegistration(reg);
         if (reg) {
           const mt5 = await fetchMT5Account(reg.id);
