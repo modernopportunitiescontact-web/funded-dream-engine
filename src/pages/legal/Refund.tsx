@@ -114,7 +114,7 @@ const Refund = () => {
           <section>
             <h2 className="font-display text-xl font-semibold mb-4 text-foreground">7. Contact</h2>
             <p className="text-muted-foreground leading-relaxed">
-              For questions regarding this policy, contact us at: support@thebestpropfirm.com
+              For questions regarding this policy, contact us at: <a href="mailto:contact@the_best_propfirm.com" className="text-primary hover:underline">contact@the_best_propfirm.com</a>
             </p>
           </section>
 
