@@ -127,7 +127,7 @@ const Privacy = () => {
           <section>
             <h2 className="font-display text-xl font-semibold mb-4 text-foreground">9. Contact Us</h2>
             <p className="text-muted-foreground leading-relaxed">
-              For privacy-related inquiries, please contact us at: support@thebestpropfirm.com
+              For privacy-related inquiries, please contact us at: <a href="mailto:contact@the_best_propfirm.com" className="text-primary hover:underline">contact@the_best_propfirm.com</a>
             </p>
           </section>
 

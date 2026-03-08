@@ -16,9 +16,15 @@ const Footer = () => {
               Nous finançons le talent. Prouvez vos compétences de trading et accédez 
               à un capital allant jusqu'à 500,000$ sans risque personnel.
             </p>
-            <div className="flex items-center gap-2 text-muted-foreground text-sm">
-              <Mail className="w-4 h-4" />
-              <span>support@thebestpropfirm.com</span>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                <Mail className="w-4 h-4" />
+                <a href="mailto:contact@the_best_propfirm.com" className="hover:text-foreground transition-colors">contact@the_best_propfirm.com</a>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                <Mail className="w-4 h-4" />
+                <a href="mailto:the_best_propfirm@the_best_propfirm.com" className="hover:text-foreground transition-colors">the_best_propfirm@the_best_propfirm.com</a>
+              </div>
             </div>
           </div>
 
