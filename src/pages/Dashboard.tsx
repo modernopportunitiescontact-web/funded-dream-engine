@@ -16,7 +16,7 @@ const Dashboard = () => {
   const { user, signOut } = useAuth();
   const [registration, setRegistration] = useState<any>(null);
   const [mt5Account, setMt5Account] = useState<any>(null);
-  const [copyRole, setCopyRole] = useState<{ role: string; status: string } | null>(null);
+  
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(true);
 
