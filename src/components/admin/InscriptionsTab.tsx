@@ -143,11 +143,40 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
                 <td className="py-3 px-3">{r.fee_expected ? `$${r.fee_expected}` : "-"}</td>
                 <td className="py-3 px-3">{statusBadge(r.payment_status)}</td>
                 <td className="py-3 px-3">
-                  {r.payment_status === "pending" && (
-                    <Button size="sm" variant="outline" className="text-success hover:text-success" onClick={() => handleValidatePayment(r)}>
-                      <CheckCircle className="w-4 h-4 mr-1" />Valider
+                  <div className="flex gap-1">
+                    {r.payment_status === "pending" && (
+                      <Button size="sm" variant="outline" className="text-success hover:text-success" onClick={() => handleValidatePayment(r)}>
+                        <CheckCircle className="w-4 h-4 mr-1" />Valider
+                      </Button>
+                    )}
+                    <Button size="sm" variant="ghost" title="Archiver" onClick={() => handleArchive(r)}>
+                      <Archive className="w-4 h-4 text-muted-foreground" />
                     </Button>
-                  )}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button size="sm" variant="ghost" title="Supprimer définitivement">
+                          <Trash2 className="w-4 h-4 text-destructive" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className="flex items-center gap-2">
+                            <AlertTriangle className="w-5 h-5 text-destructive" />
+                            Suppression définitive
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Supprimer définitivement <strong>{r.full_name}</strong> et toutes ses données associées ? Cette action est irréversible.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Annuler</AlertDialogCancel>
+                          <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => handleDeletePermanent(r)}>
+                            Supprimer
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
                 </td>
               </tr>
             ))}

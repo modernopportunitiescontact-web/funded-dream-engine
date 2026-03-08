@@ -51,16 +51,20 @@ const AdminDashboard = () => {
     return () => { supabase.removeChannel(channel); };
   }, [loadData]);
 
+  const activeRegs = registrations.filter((r: any) => !r.archived_at);
+  const archivedCount = registrations.filter((r: any) => r.archived_at).length;
+
   const stats = {
-    total: registrations.length,
-    paid: registrations.filter((r) => r.payment_status === "paid").length,
-    pending: registrations.filter((r) => r.payment_status === "pending").length,
-    revenue: registrations.filter((r) => r.payment_status === "paid").reduce((s, r) => s + (r.amount_paid ?? r.fee_expected ?? 0), 0),
-    mt5Pending: registrations.filter((r) => {
+    total: activeRegs.length,
+    paid: activeRegs.filter((r) => r.payment_status === "paid").length,
+    pending: activeRegs.filter((r) => r.payment_status === "pending").length,
+    revenue: activeRegs.filter((r) => r.payment_status === "paid").reduce((s, r) => s + (r.amount_paid ?? r.fee_expected ?? 0), 0),
+    mt5Pending: activeRegs.filter((r) => {
       if (r.payment_status !== "paid") return false;
       const mt5 = mt5Accounts.find((m: any) => m.registration_id === r.id);
       return !mt5 || mt5.status === "pending";
     }).length,
+    archived: archivedCount,
   };
 
   return (
