@@ -10,7 +10,6 @@ import BrandLogo from "@/components/BrandLogo";
 import { tradingRules } from "@/lib/pricing-data";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchMyRegistration, fetchMT5Account, createRegistration } from "@/lib/api";
-import { supabase } from "@/integrations/supabase/client";
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
