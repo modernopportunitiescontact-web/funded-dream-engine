@@ -9,6 +9,7 @@ import InscriptionsTab from "@/components/admin/InscriptionsTab";
 import PaiementsTab from "@/components/admin/PaiementsTab";
 import MT5ProvisioningTab from "@/components/admin/MT5ProvisioningTab";
 import CopyTradingTab from "@/components/admin/CopyTradingTab";
+import ArchivesTab from "@/components/admin/ArchivesTab";
 
 const AdminDashboard = () => {
   const [registrations, setRegistrations] = useState<any[]>([]);
