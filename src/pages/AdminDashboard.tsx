@@ -126,6 +126,7 @@ const AdminDashboard = () => {
               <TabsTrigger value="paiements">Paiements</TabsTrigger>
               <TabsTrigger value="mt5">MT5 Provisioning</TabsTrigger>
               <TabsTrigger value="copy">Copy Trading</TabsTrigger>
+              <TabsTrigger value="archives">Archives</TabsTrigger>
             </TabsList>
 
             <TabsContent value="inscriptions">
