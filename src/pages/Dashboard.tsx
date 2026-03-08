@@ -54,22 +54,6 @@ const Dashboard = () => {
           const mt5 = await fetchMT5Account(reg.id);
           setMt5Account(mt5);
 
-          // Check copy trading role
-          const { data: asM } = await supabase
-            .from("copy_links")
-            .select("status")
-            .eq("master_registration_id", reg.id)
-            .eq("status", "active")
-            .limit(1);
-          const { data: asS } = await supabase
-            .from("copy_links")
-            .select("status")
-            .eq("slave_registration_id", reg.id)
-            .eq("status", "active")
-            .limit(1);
-
-          if (asM && asM.length > 0) setCopyRole({ role: "Master", status: "active" });
-          else if (asS && asS.length > 0) setCopyRole({ role: "Slave", status: "active" });
         }
       } catch (err) {
         console.error(err);
