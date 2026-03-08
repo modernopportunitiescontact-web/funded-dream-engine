@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   TrendingUp, Wallet, Target, AlertTriangle, History,
   ChevronDown, ArrowUpRight, ArrowDownRight, Clock, DollarSign,
-  Eye, EyeOff, Link2
+  Eye, EyeOff
 } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import { tradingRules } from "@/lib/pricing-data";
