@@ -1,8 +1,19 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Download, CheckCircle, Clock, XCircle } from "lucide-react";
-import { updateRegistrationPayment, exportToCSV } from "@/lib/api";
+import { Search, Download, CheckCircle, Clock, XCircle, Archive, Trash2, AlertTriangle } from "lucide-react";
+import { updateRegistrationPayment, exportToCSV, archiveRegistration, deleteRegistrationPermanently } from "@/lib/api";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 
 interface Registration {
