@@ -99,13 +99,14 @@ const AdminDashboard = () => {
 
       <main className="container mx-auto px-4 py-8">
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
           {[
             { icon: Users, label: "Total Traders", value: stats.total, color: "primary" },
             { icon: DollarSign, label: "Payés", value: stats.paid, color: "success" },
             { icon: Clock, label: "En attente", value: stats.pending, color: "accent" },
             { icon: Wallet, label: "Revenus", value: `$${stats.revenue.toLocaleString()}`, color: "accent" },
             { icon: ArrowUpRight, label: "MT5 à provisionner", value: stats.mt5Pending, color: "destructive" },
+            { icon: Archive, label: "Archivés", value: stats.archived, color: "muted-foreground" },
           ].map((s, i) => (
             <div key={i} className="glass-card p-4 md:p-6">
               <div className={`w-10 h-10 rounded-xl bg-${s.color}/10 flex items-center justify-center mb-2`}>
