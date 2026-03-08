@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      copy_engine_status: {
+        Row: {
+          execution_status: string
+          heartbeat_at: string
+          id: string
+          last_error: string | null
+          last_trade_copied_at: string | null
+          last_trade_detected_at: string | null
+          listener_status: string
+          master_id: string
+          slave_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          execution_status?: string
+          heartbeat_at?: string
+          id?: string
+          last_error?: string | null
+          last_trade_copied_at?: string | null
+          last_trade_detected_at?: string | null
+          listener_status?: string
+          master_id: string
+          slave_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          execution_status?: string
+          heartbeat_at?: string
+          id?: string
+          last_error?: string | null
+          last_trade_copied_at?: string | null
+          last_trade_detected_at?: string | null
+          listener_status?: string
+          master_id?: string
+          slave_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "copy_engine_status_master_id_fkey"
+            columns: ["master_id"]
+            isOneToOne: true
+            referencedRelation: "mt5_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       copy_links: {
         Row: {
           copy_settings: Json | null
@@ -56,11 +103,93 @@ export type Database = {
           },
         ]
       }
+      execution_logs: {
+        Row: {
+          calculated_slave_lot: number | null
+          created_at: string
+          error_code: string | null
+          error_message: string | null
+          event_type: string | null
+          execution_status: string
+          id: string
+          master_id: string | null
+          master_ticket: string | null
+          multiplier_used: number | null
+          normalized_slave_lot: number | null
+          request_payload: Json | null
+          requested_master_lot: number | null
+          response_payload: Json | null
+          slave_id: string | null
+          slave_ticket: string | null
+          symbol: string | null
+          trade_event_id: string | null
+        }
+        Insert: {
+          calculated_slave_lot?: number | null
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          event_type?: string | null
+          execution_status?: string
+          id?: string
+          master_id?: string | null
+          master_ticket?: string | null
+          multiplier_used?: number | null
+          normalized_slave_lot?: number | null
+          request_payload?: Json | null
+          requested_master_lot?: number | null
+          response_payload?: Json | null
+          slave_id?: string | null
+          slave_ticket?: string | null
+          symbol?: string | null
+          trade_event_id?: string | null
+        }
+        Update: {
+          calculated_slave_lot?: number | null
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          event_type?: string | null
+          execution_status?: string
+          id?: string
+          master_id?: string | null
+          master_ticket?: string | null
+          multiplier_used?: number | null
+          normalized_slave_lot?: number | null
+          request_payload?: Json | null
+          requested_master_lot?: number | null
+          response_payload?: Json | null
+          slave_id?: string | null
+          slave_ticket?: string | null
+          symbol?: string | null
+          trade_event_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "execution_logs_master_id_fkey"
+            columns: ["master_id"]
+            isOneToOne: false
+            referencedRelation: "mt5_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "execution_logs_trade_event_id_fkey"
+            columns: ["trade_event_id"]
+            isOneToOne: false
+            referencedRelation: "trade_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mt5_accounts: {
         Row: {
           account_type: string
+          copy_enabled: boolean
           created_at: string
+          deriv_token_encrypted: string | null
           id: string
+          last_listener_heartbeat_at: string | null
+          listener_status: string
           mt5_login: string | null
           mt5_password: string | null
           mt5_server: string | null
@@ -71,8 +200,12 @@ export type Database = {
         }
         Insert: {
           account_type?: string
+          copy_enabled?: boolean
           created_at?: string
+          deriv_token_encrypted?: string | null
           id?: string
+          last_listener_heartbeat_at?: string | null
+          listener_status?: string
           mt5_login?: string | null
           mt5_password?: string | null
           mt5_server?: string | null
@@ -83,8 +216,12 @@ export type Database = {
         }
         Update: {
           account_type?: string
+          copy_enabled?: boolean
           created_at?: string
+          deriv_token_encrypted?: string | null
           id?: string
+          last_listener_heartbeat_at?: string | null
+          listener_status?: string
           mt5_login?: string | null
           mt5_password?: string | null
           mt5_server?: string | null
@@ -248,6 +385,175 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      symbol_mappings: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          master_symbol: string
+          slave_symbol: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          master_symbol: string
+          slave_symbol: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          master_symbol?: string
+          slave_symbol?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      trade_events: {
+        Row: {
+          created_at: string
+          detected_at: string
+          direction: string | null
+          entry_price: number | null
+          event_hash: string | null
+          event_type: string
+          id: string
+          lot: number | null
+          master_id: string
+          master_mt5_login: string | null
+          order_type: string | null
+          position_id: string | null
+          processed_at: string | null
+          profit_loss: number | null
+          raw_payload: Json | null
+          status: string
+          stop_loss: number | null
+          symbol: string | null
+          take_profit: number | null
+          ticket: string
+        }
+        Insert: {
+          created_at?: string
+          detected_at?: string
+          direction?: string | null
+          entry_price?: number | null
+          event_hash?: string | null
+          event_type: string
+          id?: string
+          lot?: number | null
+          master_id: string
+          master_mt5_login?: string | null
+          order_type?: string | null
+          position_id?: string | null
+          processed_at?: string | null
+          profit_loss?: number | null
+          raw_payload?: Json | null
+          status?: string
+          stop_loss?: number | null
+          symbol?: string | null
+          take_profit?: number | null
+          ticket: string
+        }
+        Update: {
+          created_at?: string
+          detected_at?: string
+          direction?: string | null
+          entry_price?: number | null
+          event_hash?: string | null
+          event_type?: string
+          id?: string
+          lot?: number | null
+          master_id?: string
+          master_mt5_login?: string | null
+          order_type?: string | null
+          position_id?: string | null
+          processed_at?: string | null
+          profit_loss?: number | null
+          raw_payload?: Json | null
+          status?: string
+          stop_loss?: number | null
+          symbol?: string | null
+          take_profit?: number | null
+          ticket?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trade_events_master_id_fkey"
+            columns: ["master_id"]
+            isOneToOne: false
+            referencedRelation: "mt5_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trade_mappings: {
+        Row: {
+          closed_at: string | null
+          created_at: string
+          id: string
+          mapping_status: string
+          master_id: string
+          master_lot: number | null
+          master_position_id: string | null
+          master_ticket: string
+          multiplier_used: number | null
+          opened_at: string | null
+          slave_id: string | null
+          slave_lot: number | null
+          slave_position_id: string | null
+          slave_ticket: string | null
+          symbol: string | null
+          updated_at: string
+        }
+        Insert: {
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          mapping_status?: string
+          master_id: string
+          master_lot?: number | null
+          master_position_id?: string | null
+          master_ticket: string
+          multiplier_used?: number | null
+          opened_at?: string | null
+          slave_id?: string | null
+          slave_lot?: number | null
+          slave_position_id?: string | null
+          slave_ticket?: string | null
+          symbol?: string | null
+          updated_at?: string
+        }
+        Update: {
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          mapping_status?: string
+          master_id?: string
+          master_lot?: number | null
+          master_position_id?: string | null
+          master_ticket?: string
+          multiplier_used?: number | null
+          opened_at?: string | null
+          slave_id?: string | null
+          slave_lot?: number | null
+          slave_position_id?: string | null
+          slave_ticket?: string | null
+          symbol?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trade_mappings_master_id_fkey"
+            columns: ["master_id"]
+            isOneToOne: false
+            referencedRelation: "mt5_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
