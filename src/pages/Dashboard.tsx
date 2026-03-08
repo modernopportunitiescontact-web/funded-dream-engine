@@ -168,24 +168,6 @@ const Dashboard = () => {
           )}
         </div>
 
-        {/* Copy Trading Role */}
-        {copyRole && (
-          <div className="glass-card p-6 mb-6">
-            <h3 className="font-display font-semibold mb-4 flex items-center gap-2">
-              <Link2 className="w-5 h-5 text-primary" />Copy Trading
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <div className="text-sm text-muted-foreground">Rôle</div>
-                <div className="font-medium">{copyRole.role}</div>
-              </div>
-              <div>
-                <div className="text-sm text-muted-foreground">Statut</div>
-                <div className="text-success font-medium">🟢 {copyRole.status}</div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Profit/Drawdown (only for paid + MT5 active) */}
         {isPaid && hasMT5 && (
