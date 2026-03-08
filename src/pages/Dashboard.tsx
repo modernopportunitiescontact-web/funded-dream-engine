@@ -4,19 +4,18 @@ import { Button } from "@/components/ui/button";
 import {
   TrendingUp, Wallet, Target, AlertTriangle, History,
   ChevronDown, ArrowUpRight, ArrowDownRight, Clock, DollarSign,
-  Eye, EyeOff, Link2
+  Eye, EyeOff
 } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import { tradingRules } from "@/lib/pricing-data";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchMyRegistration, fetchMT5Account, createRegistration } from "@/lib/api";
-import { supabase } from "@/integrations/supabase/client";
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
   const [registration, setRegistration] = useState<any>(null);
   const [mt5Account, setMt5Account] = useState<any>(null);
-  const [copyRole, setCopyRole] = useState<{ role: string; status: string } | null>(null);
+  
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -54,22 +53,6 @@ const Dashboard = () => {
           const mt5 = await fetchMT5Account(reg.id);
           setMt5Account(mt5);
 
-          // Check copy trading role
-          const { data: asM } = await supabase
-            .from("copy_links")
-            .select("status")
-            .eq("master_registration_id", reg.id)
-            .eq("status", "active")
-            .limit(1);
-          const { data: asS } = await supabase
-            .from("copy_links")
-            .select("status")
-            .eq("slave_registration_id", reg.id)
-            .eq("status", "active")
-            .limit(1);
-
-          if (asM && asM.length > 0) setCopyRole({ role: "Master", status: "active" });
-          else if (asS && asS.length > 0) setCopyRole({ role: "Slave", status: "active" });
         }
       } catch (err) {
         console.error(err);
@@ -184,24 +167,6 @@ const Dashboard = () => {
           )}
         </div>
 
-        {/* Copy Trading Role */}
-        {copyRole && (
-          <div className="glass-card p-6 mb-6">
-            <h3 className="font-display font-semibold mb-4 flex items-center gap-2">
-              <Link2 className="w-5 h-5 text-primary" />Copy Trading
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <div className="text-sm text-muted-foreground">Rôle</div>
-                <div className="font-medium">{copyRole.role}</div>
-              </div>
-              <div>
-                <div className="text-sm text-muted-foreground">Statut</div>
-                <div className="text-success font-medium">🟢 {copyRole.status}</div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Profit/Drawdown (only for paid + MT5 active) */}
         {isPaid && hasMT5 && (
