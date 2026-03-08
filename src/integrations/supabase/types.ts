@@ -321,6 +321,7 @@ export type Database = {
         Row: {
           account_type: string
           amount_paid: number | null
+          archived_at: string | null
           capital_tier: string
           country: string | null
           created_at: string
@@ -343,6 +344,7 @@ export type Database = {
         Insert: {
           account_type?: string
           amount_paid?: number | null
+          archived_at?: string | null
           capital_tier: string
           country?: string | null
           created_at?: string
@@ -365,6 +367,7 @@ export type Database = {
         Update: {
           account_type?: string
           amount_paid?: number | null
+          archived_at?: string | null
           capital_tier?: string
           country?: string | null
           created_at?: string
