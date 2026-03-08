@@ -141,6 +141,9 @@ const AdminDashboard = () => {
             <TabsContent value="copy">
               <CopyTradingTab registrations={registrations} mt5Accounts={mt5Accounts} copyLinks={copyLinks} onRefresh={loadData} />
             </TabsContent>
+            <TabsContent value="archives">
+              <ArchivesTab registrations={registrations} onRefresh={loadData} />
+            </TabsContent>
           </Tabs>
         </div>
       </main>
