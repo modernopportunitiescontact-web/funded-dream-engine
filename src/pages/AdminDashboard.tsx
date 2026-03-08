@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { TrendingUp, Users, DollarSign, Clock, ArrowUpRight, Wallet, RefreshCw, Eye } from "lucide-react";
+import { TrendingUp, Users, DollarSign, Clock, ArrowUpRight, Wallet, RefreshCw, Eye, Archive } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,6 +9,7 @@ import InscriptionsTab from "@/components/admin/InscriptionsTab";
 import PaiementsTab from "@/components/admin/PaiementsTab";
 import MT5ProvisioningTab from "@/components/admin/MT5ProvisioningTab";
 import CopyTradingTab from "@/components/admin/CopyTradingTab";
+import ArchivesTab from "@/components/admin/ArchivesTab";
 
 const AdminDashboard = () => {
   const [registrations, setRegistrations] = useState<any[]>([]);
@@ -50,16 +51,20 @@ const AdminDashboard = () => {
     return () => { supabase.removeChannel(channel); };
   }, [loadData]);
 
+  const activeRegs = registrations.filter((r: any) => !r.archived_at);
+  const archivedCount = registrations.filter((r: any) => r.archived_at).length;
+
   const stats = {
-    total: registrations.length,
-    paid: registrations.filter((r) => r.payment_status === "paid").length,
-    pending: registrations.filter((r) => r.payment_status === "pending").length,
-    revenue: registrations.filter((r) => r.payment_status === "paid").reduce((s, r) => s + (r.amount_paid ?? r.fee_expected ?? 0), 0),
-    mt5Pending: registrations.filter((r) => {
+    total: activeRegs.length,
+    paid: activeRegs.filter((r) => r.payment_status === "paid").length,
+    pending: activeRegs.filter((r) => r.payment_status === "pending").length,
+    revenue: activeRegs.filter((r) => r.payment_status === "paid").reduce((s, r) => s + (r.amount_paid ?? r.fee_expected ?? 0), 0),
+    mt5Pending: activeRegs.filter((r) => {
       if (r.payment_status !== "paid") return false;
       const mt5 = mt5Accounts.find((m: any) => m.registration_id === r.id);
       return !mt5 || mt5.status === "pending";
     }).length,
+    archived: archivedCount,
   };
 
   return (
@@ -94,13 +99,14 @@ const AdminDashboard = () => {
 
       <main className="container mx-auto px-4 py-8">
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
           {[
             { icon: Users, label: "Total Traders", value: stats.total, color: "primary" },
             { icon: DollarSign, label: "Payés", value: stats.paid, color: "success" },
             { icon: Clock, label: "En attente", value: stats.pending, color: "accent" },
             { icon: Wallet, label: "Revenus", value: `$${stats.revenue.toLocaleString()}`, color: "accent" },
             { icon: ArrowUpRight, label: "MT5 à provisionner", value: stats.mt5Pending, color: "destructive" },
+            { icon: Archive, label: "Archivés", value: stats.archived, color: "muted-foreground" },
           ].map((s, i) => (
             <div key={i} className="glass-card p-4 md:p-6">
               <div className={`w-10 h-10 rounded-xl bg-${s.color}/10 flex items-center justify-center mb-2`}>
@@ -120,6 +126,7 @@ const AdminDashboard = () => {
               <TabsTrigger value="paiements">Paiements</TabsTrigger>
               <TabsTrigger value="mt5">MT5 Provisioning</TabsTrigger>
               <TabsTrigger value="copy">Copy Trading</TabsTrigger>
+              <TabsTrigger value="archives">Archives</TabsTrigger>
             </TabsList>
 
             <TabsContent value="inscriptions">
@@ -133,6 +140,9 @@ const AdminDashboard = () => {
             </TabsContent>
             <TabsContent value="copy">
               <CopyTradingTab registrations={registrations} mt5Accounts={mt5Accounts} copyLinks={copyLinks} onRefresh={loadData} />
+            </TabsContent>
+            <TabsContent value="archives">
+              <ArchivesTab registrations={registrations} onRefresh={loadData} />
             </TabsContent>
           </Tabs>
         </div>

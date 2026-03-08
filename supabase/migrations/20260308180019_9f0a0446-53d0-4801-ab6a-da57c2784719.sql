@@ -1,0 +1,1 @@
+ALTER TABLE public.registrations ADD COLUMN archived_at timestamp with time zone DEFAULT NULL;

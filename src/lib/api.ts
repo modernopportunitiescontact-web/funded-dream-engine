@@ -200,6 +200,33 @@ export const calculateSlaveLot = (
   return { lot, adjusted, reason };
 };
 
+// ──── Archive / Delete ────
+
+export const archiveRegistration = async (id: string) => {
+  const { error } = await supabase
+    .from("registrations")
+    .update({ archived_at: new Date().toISOString() } as any)
+    .eq("id", id);
+  if (error) throw error;
+};
+
+export const unarchiveRegistration = async (id: string) => {
+  const { error } = await supabase
+    .from("registrations")
+    .update({ archived_at: null } as any)
+    .eq("id", id);
+  if (error) throw error;
+};
+
+export const deleteRegistrationPermanently = async (id: string) => {
+  // Delete related MT5 accounts and copy links first
+  await supabase.from("mt5_accounts").delete().eq("registration_id", id);
+  await supabase.from("copy_links").delete().eq("master_registration_id", id);
+  await supabase.from("copy_links").delete().eq("slave_registration_id", id);
+  const { error } = await supabase.from("registrations").delete().eq("id", id);
+  if (error) throw error;
+};
+
 // ──── CSV Export ────
 
 export const exportToCSV = (data: Record<string, unknown>[], filename: string) => {
