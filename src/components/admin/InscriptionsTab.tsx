@@ -44,7 +44,9 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
   const [filter, setFilter] = useState<"all" | "paid" | "pending">("all");
   const { toast } = useToast();
 
-  const filtered = registrations.filter((r) => {
+  const filtered = registrations.filter((r: any) => {
+    // Exclude archived
+    if (r.archived_at) return false;
     const matchSearch =
       !search ||
       (r.full_name ?? "").toLowerCase().includes(search.toLowerCase()) ||
@@ -56,6 +58,26 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
       (filter === "pending" && r.payment_status === "pending");
     return matchSearch && matchFilter;
   });
+
+  const handleArchive = async (reg: Registration) => {
+    try {
+      await archiveRegistration(reg.id);
+      toast({ title: "Compte archivé", description: `${reg.full_name} a été archivé` });
+      onRefresh();
+    } catch {
+      toast({ title: "Erreur", variant: "destructive" });
+    }
+  };
+
+  const handleDeletePermanent = async (reg: Registration) => {
+    try {
+      await deleteRegistrationPermanently(reg.id);
+      toast({ title: "Compte supprimé", description: `${reg.full_name} a été supprimé définitivement` });
+      onRefresh();
+    } catch {
+      toast({ title: "Erreur", variant: "destructive" });
+    }
+  };
 
   const handleValidatePayment = async (reg: Registration) => {
     try {
