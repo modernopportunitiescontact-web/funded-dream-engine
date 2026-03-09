@@ -85,11 +85,22 @@ const Register = () => {
     setIsLoading(true);
     try {
       // 1. Sign up user
-      const { error: authError } = await signUp(formData.email, formData.password, {
+      const { error: authError, data: authData } = await signUp(formData.email, formData.password, {
         full_name: formData.fullName,
         phone: formData.phone,
       });
       if (authError) throw authError;
+
+      // Detect repeated signup (email already exists) - Supabase returns 200 but with empty identities
+      if (authData?.user && authData.user.identities && authData.user.identities.length === 0) {
+        toast({ 
+          title: "Cet email est déjà utilisé", 
+          description: "Un compte existe déjà avec cet email. Veuillez vous connecter ou utiliser un autre email.",
+          variant: "destructive" 
+        });
+        setIsLoading(false);
+        return;
+      }
 
       // Save form data so registration can be created after email verification + login
       localStorage.setItem("pending_registration", JSON.stringify({
