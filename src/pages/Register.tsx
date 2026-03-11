@@ -84,6 +84,18 @@ const Register = () => {
 
     setIsLoading(true);
     try {
+      // 0. Check phone uniqueness
+      const phoneIsUnique = await checkPhoneUnique(formData.phone);
+      if (!phoneIsUnique) {
+        toast({ 
+          title: "Ce numéro de téléphone est déjà utilisé", 
+          description: "Un compte existe déjà avec ce numéro. Veuillez utiliser un autre numéro.",
+          variant: "destructive" 
+        });
+        setIsLoading(false);
+        return;
+      }
+
       // 1. Sign up user
       const { error: authError, data: authData } = await signUp(formData.email, formData.password, {
         full_name: formData.fullName,
