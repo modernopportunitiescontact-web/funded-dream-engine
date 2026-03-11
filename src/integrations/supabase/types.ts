@@ -195,7 +195,9 @@ export type Database = {
           mt5_server: string | null
           multiplier: number
           registration_id: string
+          sl_points: number | null
           status: string
+          tp_points: number | null
           updated_at: string
         }
         Insert: {
@@ -211,7 +213,9 @@ export type Database = {
           mt5_server?: string | null
           multiplier?: number
           registration_id: string
+          sl_points?: number | null
           status?: string
+          tp_points?: number | null
           updated_at?: string
         }
         Update: {
@@ -227,7 +231,9 @@ export type Database = {
           mt5_server?: string | null
           multiplier?: number
           registration_id?: string
+          sl_points?: number | null
           status?: string
+          tp_points?: number | null
           updated_at?: string
         }
         Relationships: [
