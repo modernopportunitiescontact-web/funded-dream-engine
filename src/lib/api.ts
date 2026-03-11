@@ -235,6 +235,52 @@ export const deleteRegistrationPermanently = async (id: string) => {
   if (error) throw error;
 };
 
+// ──── Admin Gift Account ────
+
+export interface AdminGiftRegistration {
+  user_id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  country: string;
+  account_type: string;
+  capital_tier: string;
+  plan_capital: number;
+  fee_expected: number;
+  notes?: string;
+}
+
+export const createGiftRegistration = async (data: AdminGiftRegistration) => {
+  const { data: reg, error } = await supabase
+    .from("registrations")
+    .insert({
+      ...data,
+      status: "pending",
+      payment_status: "paid",
+      paid_at: new Date().toISOString(),
+      amount_paid: 0,
+      payment_method: "cadeau",
+      notes: data.notes || "Compte cadeau créé par l'admin",
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return reg;
+};
+
+// ──── Fetch registrations by user_id ────
+
+export const fetchRegistrationsByUserId = async (userId: string) => {
+  const { data, error } = await supabase
+    .from("registrations")
+    .select("*")
+    .eq("user_id", userId)
+    .is("archived_at", null)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+};
+
 // ──── CSV Export ────
 
 export const exportToCSV = (data: Record<string, unknown>[], filename: string) => {
