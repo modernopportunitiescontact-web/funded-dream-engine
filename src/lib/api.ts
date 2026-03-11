@@ -1,5 +1,13 @@
 import { supabase } from "@/integrations/supabase/client";
 
+// ──── Phone Uniqueness ────
+
+export const checkPhoneUnique = async (phone: string): Promise<boolean> => {
+  const { data, error } = await supabase.rpc("check_phone_unique", { _phone: phone });
+  if (error) throw error;
+  return data as boolean;
+};
+
 // ──── Registration ────
 
 export interface RegistrationInsert {

@@ -11,7 +11,7 @@ import { User, Mail, Phone, Lock, ArrowLeft, Copy, Check } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import { pricingTiers } from "@/lib/pricing-data";
 import { useAuth } from "@/hooks/useAuth";
-import { createRegistration } from "@/lib/api";
+import { createRegistration, checkPhoneUnique } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
 const USDT_TRC20_ADDRESS = "TX9RsjbnpyMNVxWgRuYwNdoekwzrt13U3v";
