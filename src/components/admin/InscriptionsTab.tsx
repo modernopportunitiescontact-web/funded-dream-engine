@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Download, CheckCircle, Clock, XCircle, Archive, Trash2, AlertTriangle } from "lucide-react";
-import { updateRegistrationPayment, exportToCSV, archiveRegistration, deleteRegistrationPermanently } from "@/lib/api";
+import { Search, Download, CheckCircle, Clock, XCircle, Archive, Trash2, AlertTriangle, Gift, Plus } from "lucide-react";
+import { updateRegistrationPayment, exportToCSV, archiveRegistration, deleteRegistrationPermanently, createGiftRegistration, fetchRegistrationsByUserId } from "@/lib/api";
+import { pricingTiers } from "@/lib/pricing-data";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,6 +15,23 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 
 interface Registration {
@@ -32,6 +50,8 @@ interface Registration {
   account_type: string;
   capital_tier: string;
   country: string | null;
+  user_id: string;
+  notes: string | null;
 }
 
 interface Props {
@@ -44,8 +64,15 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
   const [filter, setFilter] = useState<"all" | "paid" | "pending">("all");
   const { toast } = useToast();
 
+  // Gift account dialog state
+  const [giftOpen, setGiftOpen] = useState(false);
+  const [giftLoading, setGiftLoading] = useState(false);
+  const [giftSourceRegId, setGiftSourceRegId] = useState("");
+  const [giftCapitalTier, setGiftCapitalTier] = useState("");
+  const [giftAccountType, setGiftAccountType] = useState("");
+  const [giftNotes, setGiftNotes] = useState("");
+
   const filtered = registrations.filter((r: any) => {
-    // Exclude archived
     if (r.archived_at) return false;
     const matchSearch =
       !search ||
@@ -58,6 +85,9 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
       (filter === "pending" && r.payment_status === "pending");
     return matchSearch && matchFilter;
   });
+
+  // Get unique traders for gift source selection (active, paid)
+  const paidTraders = registrations.filter((r: any) => !r.archived_at && r.payment_status === "paid");
 
   const handleArchive = async (reg: Registration) => {
     try {
@@ -93,6 +123,53 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
     }
   };
 
+  const handleCreateGift = async () => {
+    if (!giftSourceRegId || !giftCapitalTier || !giftAccountType) {
+      toast({ title: "Remplissez tous les champs", variant: "destructive" });
+      return;
+    }
+
+    const sourceReg = registrations.find((r) => r.id === giftSourceRegId);
+    if (!sourceReg) {
+      toast({ title: "Trader source introuvable", variant: "destructive" });
+      return;
+    }
+
+    const tier = pricingTiers.find((t) => t.capitalFormatted === giftCapitalTier);
+    if (!tier) {
+      toast({ title: "Tier invalide", variant: "destructive" });
+      return;
+    }
+
+    setGiftLoading(true);
+    try {
+      await createGiftRegistration({
+        user_id: sourceReg.user_id,
+        full_name: sourceReg.full_name ?? "",
+        email: sourceReg.email ?? "",
+        phone: sourceReg.phone ?? "",
+        country: sourceReg.country ?? "",
+        account_type: giftAccountType,
+        capital_tier: giftCapitalTier,
+        plan_capital: tier.capital,
+        fee_expected: 0,
+        notes: giftNotes || "Compte cadeau",
+      });
+      toast({ title: "Compte cadeau créé !", description: `Nouveau compte pour ${sourceReg.full_name}` });
+      setGiftOpen(false);
+      setGiftSourceRegId("");
+      setGiftCapitalTier("");
+      setGiftAccountType("");
+      setGiftNotes("");
+      onRefresh();
+    } catch (err) {
+      console.error(err);
+      toast({ title: "Erreur lors de la création", variant: "destructive" });
+    } finally {
+      setGiftLoading(false);
+    }
+  };
+
   const statusBadge = (s: string) => {
     if (s === "paid") return <span className="px-2 py-1 rounded text-xs font-medium bg-success/20 text-success flex items-center gap-1"><CheckCircle className="w-3 h-3" />Payé</span>;
     if (s === "pending") return <span className="px-2 py-1 rounded text-xs font-medium bg-accent/20 text-accent flex items-center gap-1"><Clock className="w-3 h-3" />En attente</span>;
@@ -106,7 +183,7 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input placeholder="Rechercher..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9 bg-secondary/50" />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           {(["all", "pending", "paid"] as const).map((f) => (
             <Button key={f} variant={filter === f ? "default" : "outline"} size="sm" onClick={() => setFilter(f)}>
               {f === "all" ? "Tous" : f === "paid" ? "Payés" : "En attente"}
@@ -115,6 +192,90 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
           <Button variant="outline" size="sm" onClick={() => exportToCSV(filtered as any, "inscriptions")}>
             <Download className="w-4 h-4 mr-1" />CSV
           </Button>
+
+          {/* Gift Account Button */}
+          <Dialog open={giftOpen} onOpenChange={setGiftOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" variant="outline" className="text-primary border-primary/30">
+                <Gift className="w-4 h-4 mr-1" />Compte Cadeau
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Gift className="w-5 h-5 text-primary" />
+                  Créer un Compte Cadeau
+                </DialogTitle>
+                <DialogDescription>
+                  Créer un compte supplémentaire pour un trader existant (récompense Phase 1/2 réussie). Les informations personnelles seront reprises automatiquement.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-4 py-2">
+                <div className="space-y-2">
+                  <Label>Trader bénéficiaire</Label>
+                  <Select value={giftSourceRegId} onValueChange={setGiftSourceRegId}>
+                    <SelectTrigger className="bg-secondary/50">
+                      <SelectValue placeholder="Sélectionner un trader..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {paidTraders.map((r) => (
+                        <SelectItem key={r.id} value={r.id}>
+                          {r.full_name} — {r.email} ({r.account_type} ${r.plan_capital?.toLocaleString()})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Type de compte</Label>
+                  <Select value={giftAccountType} onValueChange={setGiftAccountType}>
+                    <SelectTrigger className="bg-secondary/50">
+                      <SelectValue placeholder="Synthetic / Financial" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Synthetic">Synthetic</SelectItem>
+                      <SelectItem value="Financial">Financial</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Capital</Label>
+                  <Select value={giftCapitalTier} onValueChange={setGiftCapitalTier}>
+                    <SelectTrigger className="bg-secondary/50">
+                      <SelectValue placeholder="Choisir le capital..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {pricingTiers.map((t) => (
+                        <SelectItem key={t.capitalFormatted} value={t.capitalFormatted}>
+                          {t.capitalFormatted}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Notes (optionnel)</Label>
+                  <Input
+                    value={giftNotes}
+                    onChange={(e) => setGiftNotes(e.target.value)}
+                    placeholder="Ex: Récompense Phase 2 réussie"
+                    className="bg-secondary/50"
+                  />
+                </div>
+              </div>
+
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setGiftOpen(false)}>Annuler</Button>
+                <Button onClick={handleCreateGift} disabled={giftLoading}>
+                  {giftLoading ? "Création..." : "Créer le compte"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
@@ -129,6 +290,7 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
               <th className="text-left py-3 px-3 text-muted-foreground font-medium">Capital</th>
               <th className="text-left py-3 px-3 text-muted-foreground font-medium">Fee</th>
               <th className="text-left py-3 px-3 text-muted-foreground font-medium">Statut</th>
+              <th className="text-left py-3 px-3 text-muted-foreground font-medium">Type</th>
               <th className="text-left py-3 px-3 text-muted-foreground font-medium">Actions</th>
             </tr>
           </thead>
@@ -140,8 +302,15 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
                 <td className="py-3 px-3">{r.email ?? "-"}</td>
                 <td className="py-3 px-3">{r.phone ?? "-"}</td>
                 <td className="py-3 px-3 font-medium">{r.plan_capital ? `$${r.plan_capital.toLocaleString()}` : r.capital_tier}</td>
-                <td className="py-3 px-3">{r.fee_expected ? `$${r.fee_expected}` : "-"}</td>
+                <td className="py-3 px-3">{r.fee_expected ? `$${r.fee_expected}` : r.payment_method === "cadeau" ? <span className="text-xs text-primary">🎁 Cadeau</span> : "-"}</td>
                 <td className="py-3 px-3">{statusBadge(r.payment_status)}</td>
+                <td className="py-3 px-3">
+                  {r.notes?.includes("cadeau") || r.payment_method === "cadeau" ? (
+                    <span className="px-2 py-1 rounded text-xs font-medium bg-primary/10 text-primary">🎁 Gift</span>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">{r.account_type}</span>
+                  )}
+                </td>
                 <td className="py-3 px-3">
                   <div className="flex gap-1">
                     {r.payment_status === "pending" && (
@@ -181,7 +350,7 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
               </tr>
             ))}
             {filtered.length === 0 && (
-              <tr><td colSpan={8} className="py-8 text-center text-muted-foreground">Aucune inscription trouvée</td></tr>
+              <tr><td colSpan={9} className="py-8 text-center text-muted-foreground">Aucune inscription trouvée</td></tr>
             )}
           </tbody>
         </table>
