@@ -181,11 +181,26 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
 
   const handleChangeStatus = async (reg: Registration, newStatus: string) => {
     try {
-      await updateRegistrationStatus(reg.id, newStatus);
+      await updateRegistrationStatus(reg.id, newStatus, reg.status, user?.id ?? "");
       toast({ title: "Phase mise à jour", description: `${reg.full_name} → ${newStatus}` });
       onRefresh();
     } catch {
       toast({ title: "Erreur", variant: "destructive" });
+    }
+  };
+
+  const handleShowHistory = async (regId: string) => {
+    setHistoryRegId(regId);
+    setHistoryOpen(true);
+    setHistoryLoading(true);
+    try {
+      const data = await fetchPhaseHistory(regId);
+      setHistoryData(data);
+    } catch (err) {
+      console.error(err);
+      setHistoryData([]);
+    } finally {
+      setHistoryLoading(false);
     }
   };
 
