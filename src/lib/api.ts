@@ -210,12 +210,49 @@ export const calculateSlaveLot = (
 
 // ──── Update Registration Status (Phase) ────
 
-export const updateRegistrationStatus = async (id: string, status: string) => {
+export const updateRegistrationStatus = async (
+  id: string,
+  newStatus: string,
+  oldStatus: string,
+  changedBy: string
+) => {
   const { error } = await supabase
     .from("registrations")
-    .update({ status })
+    .update({ status: newStatus })
     .eq("id", id);
   if (error) throw error;
+
+  // Log phase change history
+  const { error: histErr } = await supabase
+    .from("phase_history" as any)
+    .insert({
+      registration_id: id,
+      old_status: oldStatus,
+      new_status: newStatus,
+      changed_by: changedBy,
+    });
+  if (histErr) console.error("Failed to log phase history", histErr);
+
+  // Trigger email notification via edge function
+  try {
+    await supabase.functions.invoke("notify-phase-change", {
+      body: { registration_id: id, old_status: oldStatus, new_status: newStatus },
+    });
+  } catch (e) {
+    console.error("Failed to send phase notification", e);
+  }
+};
+
+// ──── Phase History ────
+
+export const fetchPhaseHistory = async (registrationId: string) => {
+  const { data, error } = await supabase
+    .from("phase_history" as any)
+    .select("*")
+    .eq("registration_id", registrationId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
 };
 
 // ──── Archive / Delete ────
