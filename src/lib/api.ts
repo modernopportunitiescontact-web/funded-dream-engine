@@ -208,6 +208,16 @@ export const calculateSlaveLot = (
   return { lot, adjusted, reason };
 };
 
+// ──── Update Registration Status (Phase) ────
+
+export const updateRegistrationStatus = async (id: string, status: string) => {
+  const { error } = await supabase
+    .from("registrations")
+    .update({ status })
+    .eq("id", id);
+  if (error) throw error;
+};
+
 // ──── Archive / Delete ────
 
 export const archiveRegistration = async (id: string) => {
