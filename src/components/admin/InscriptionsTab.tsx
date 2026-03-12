@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Download, CheckCircle, Clock, XCircle, Archive, Trash2, AlertTriangle, Gift, Plus } from "lucide-react";
-import { updateRegistrationPayment, exportToCSV, archiveRegistration, deleteRegistrationPermanently, createGiftRegistration, fetchRegistrationsByUserId, updateRegistrationStatus } from "@/lib/api";
+import { Search, Download, CheckCircle, Clock, XCircle, Archive, Trash2, AlertTriangle, Gift, Plus, History } from "lucide-react";
+import { updateRegistrationPayment, exportToCSV, archiveRegistration, deleteRegistrationPermanently, createGiftRegistration, fetchRegistrationsByUserId, updateRegistrationStatus, fetchPhaseHistory } from "@/lib/api";
 import { pricingTiers } from "@/lib/pricing-data";
+import { useAuth } from "@/hooks/useAuth";
 import {
   AlertDialog,
   AlertDialogAction,
