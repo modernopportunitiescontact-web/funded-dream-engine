@@ -327,6 +327,18 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
                 <td className="py-3 px-3">{r.fee_expected ? `$${r.fee_expected}` : r.payment_method === "cadeau" ? <span className="text-xs text-primary">🎁 Cadeau</span> : "-"}</td>
                 <td className="py-3 px-3">{statusBadge(r.payment_status)}</td>
                 <td className="py-3 px-3">
+                  <Select value={r.status} onValueChange={(val) => handleChangeStatus(r, val)}>
+                    <SelectTrigger className={`h-7 w-32 text-xs font-medium border-0 ${phaseBadgeColor(r.status)}`}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {phaseStatuses.map((s) => (
+                        <SelectItem key={s} value={s}>{s === "pending" ? "En attente" : s === "phase1" ? "Phase 1" : s === "phase2" ? "Phase 2" : s === "funded" ? "Funded" : "Disqualifié"}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </td>
+                <td className="py-3 px-3">
                   {r.notes?.includes("cadeau") || r.payment_method === "cadeau" ? (
                     <span className="px-2 py-1 rounded text-xs font-medium bg-primary/10 text-primary">🎁 Gift</span>
                   ) : (
