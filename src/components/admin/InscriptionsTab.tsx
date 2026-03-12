@@ -384,7 +384,7 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
               </tr>
             ))}
             {filtered.length === 0 && (
-              <tr><td colSpan={9} className="py-8 text-center text-muted-foreground">Aucune inscription trouvée</td></tr>
+              <tr><td colSpan={10} className="py-8 text-center text-muted-foreground">Aucune inscription trouvée</td></tr>
             )}
           </tbody>
         </table>
