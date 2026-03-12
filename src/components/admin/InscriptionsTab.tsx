@@ -52,6 +52,7 @@ interface Registration {
   country: string | null;
   user_id: string;
   notes: string | null;
+  status: string;
 }
 
 interface Props {
