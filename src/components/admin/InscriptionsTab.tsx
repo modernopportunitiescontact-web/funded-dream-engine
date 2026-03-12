@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Download, CheckCircle, Clock, XCircle, Archive, Trash2, AlertTriangle, Gift, Plus } from "lucide-react";
-import { updateRegistrationPayment, exportToCSV, archiveRegistration, deleteRegistrationPermanently, createGiftRegistration, fetchRegistrationsByUserId } from "@/lib/api";
+import { updateRegistrationPayment, exportToCSV, archiveRegistration, deleteRegistrationPermanently, createGiftRegistration, fetchRegistrationsByUserId, updateRegistrationStatus } from "@/lib/api";
 import { pricingTiers } from "@/lib/pricing-data";
 import {
   AlertDialog,
@@ -52,6 +52,7 @@ interface Registration {
   country: string | null;
   user_id: string;
   notes: string | null;
+  status: string;
 }
 
 interface Props {
@@ -168,6 +169,26 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
     } finally {
       setGiftLoading(false);
     }
+  };
+
+  const handleChangeStatus = async (reg: Registration, newStatus: string) => {
+    try {
+      await updateRegistrationStatus(reg.id, newStatus);
+      toast({ title: "Phase mise à jour", description: `${reg.full_name} → ${newStatus}` });
+      onRefresh();
+    } catch {
+      toast({ title: "Erreur", variant: "destructive" });
+    }
+  };
+
+  const phaseStatuses = ["pending", "phase1", "phase2", "funded", "disqualified"] as const;
+
+  const phaseBadgeColor = (s: string) => {
+    if (s === "funded") return "bg-success/20 text-success";
+    if (s === "phase2") return "bg-primary/20 text-primary";
+    if (s === "phase1") return "bg-accent/20 text-accent";
+    if (s === "disqualified") return "bg-destructive/20 text-destructive";
+    return "bg-muted text-muted-foreground";
   };
 
   const statusBadge = (s: string) => {
@@ -289,7 +310,8 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
               <th className="text-left py-3 px-3 text-muted-foreground font-medium">Tél</th>
               <th className="text-left py-3 px-3 text-muted-foreground font-medium">Capital</th>
               <th className="text-left py-3 px-3 text-muted-foreground font-medium">Fee</th>
-              <th className="text-left py-3 px-3 text-muted-foreground font-medium">Statut</th>
+              <th className="text-left py-3 px-3 text-muted-foreground font-medium">Paiement</th>
+              <th className="text-left py-3 px-3 text-muted-foreground font-medium">Phase</th>
               <th className="text-left py-3 px-3 text-muted-foreground font-medium">Type</th>
               <th className="text-left py-3 px-3 text-muted-foreground font-medium">Actions</th>
             </tr>
@@ -304,6 +326,18 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
                 <td className="py-3 px-3 font-medium">{r.plan_capital ? `$${r.plan_capital.toLocaleString()}` : r.capital_tier}</td>
                 <td className="py-3 px-3">{r.fee_expected ? `$${r.fee_expected}` : r.payment_method === "cadeau" ? <span className="text-xs text-primary">🎁 Cadeau</span> : "-"}</td>
                 <td className="py-3 px-3">{statusBadge(r.payment_status)}</td>
+                <td className="py-3 px-3">
+                  <Select value={r.status} onValueChange={(val) => handleChangeStatus(r, val)}>
+                    <SelectTrigger className={`h-7 w-32 text-xs font-medium border-0 ${phaseBadgeColor(r.status)}`}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {phaseStatuses.map((s) => (
+                        <SelectItem key={s} value={s}>{s === "pending" ? "En attente" : s === "phase1" ? "Phase 1" : s === "phase2" ? "Phase 2" : s === "funded" ? "Funded" : "Disqualifié"}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </td>
                 <td className="py-3 px-3">
                   {r.notes?.includes("cadeau") || r.payment_method === "cadeau" ? (
                     <span className="px-2 py-1 rounded text-xs font-medium bg-primary/10 text-primary">🎁 Gift</span>
@@ -350,7 +384,7 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
               </tr>
             ))}
             {filtered.length === 0 && (
-              <tr><td colSpan={9} className="py-8 text-center text-muted-foreground">Aucune inscription trouvée</td></tr>
+              <tr><td colSpan={10} className="py-8 text-center text-muted-foreground">Aucune inscription trouvée</td></tr>
             )}
           </tbody>
         </table>
