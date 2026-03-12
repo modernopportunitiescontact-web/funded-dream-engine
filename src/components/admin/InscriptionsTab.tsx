@@ -65,6 +65,7 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "paid" | "pending">("all");
   const { toast } = useToast();
+  const { user } = useAuth();
 
   // Gift account dialog state
   const [giftOpen, setGiftOpen] = useState(false);
@@ -73,6 +74,12 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
   const [giftCapitalTier, setGiftCapitalTier] = useState("");
   const [giftAccountType, setGiftAccountType] = useState("");
   const [giftNotes, setGiftNotes] = useState("");
+
+  // Phase history dialog state
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyRegId, setHistoryRegId] = useState("");
+  const [historyData, setHistoryData] = useState<any[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   const filtered = registrations.filter((r: any) => {
     if (r.archived_at) return false;
