@@ -375,6 +375,9 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
                         <CheckCircle className="w-4 h-4 mr-1" />Valider
                       </Button>
                     )}
+                    <Button size="sm" variant="ghost" title="Historique des phases" onClick={() => handleShowHistory(r.id)}>
+                      <History className="w-4 h-4 text-primary" />
+                    </Button>
                     <Button size="sm" variant="ghost" title="Archiver" onClick={() => handleArchive(r)}>
                       <Archive className="w-4 h-4 text-muted-foreground" />
                     </Button>
