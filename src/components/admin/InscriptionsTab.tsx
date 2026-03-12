@@ -310,7 +310,8 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
               <th className="text-left py-3 px-3 text-muted-foreground font-medium">Tél</th>
               <th className="text-left py-3 px-3 text-muted-foreground font-medium">Capital</th>
               <th className="text-left py-3 px-3 text-muted-foreground font-medium">Fee</th>
-              <th className="text-left py-3 px-3 text-muted-foreground font-medium">Statut</th>
+              <th className="text-left py-3 px-3 text-muted-foreground font-medium">Paiement</th>
+              <th className="text-left py-3 px-3 text-muted-foreground font-medium">Phase</th>
               <th className="text-left py-3 px-3 text-muted-foreground font-medium">Type</th>
               <th className="text-left py-3 px-3 text-muted-foreground font-medium">Actions</th>
             </tr>
