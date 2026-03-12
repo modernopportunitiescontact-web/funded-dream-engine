@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Download, CheckCircle, Clock, XCircle, Archive, Trash2, AlertTriangle, Gift, Plus } from "lucide-react";
-import { updateRegistrationPayment, exportToCSV, archiveRegistration, deleteRegistrationPermanently, createGiftRegistration, fetchRegistrationsByUserId, updateRegistrationStatus } from "@/lib/api";
+import { Search, Download, CheckCircle, Clock, XCircle, Archive, Trash2, AlertTriangle, Gift, Plus, History } from "lucide-react";
+import { updateRegistrationPayment, exportToCSV, archiveRegistration, deleteRegistrationPermanently, createGiftRegistration, fetchRegistrationsByUserId, updateRegistrationStatus, fetchPhaseHistory } from "@/lib/api";
 import { pricingTiers } from "@/lib/pricing-data";
+import { useAuth } from "@/hooks/useAuth";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -64,6 +65,7 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "paid" | "pending">("all");
   const { toast } = useToast();
+  const { user } = useAuth();
 
   // Gift account dialog state
   const [giftOpen, setGiftOpen] = useState(false);
@@ -72,6 +74,12 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
   const [giftCapitalTier, setGiftCapitalTier] = useState("");
   const [giftAccountType, setGiftAccountType] = useState("");
   const [giftNotes, setGiftNotes] = useState("");
+
+  // Phase history dialog state
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyRegId, setHistoryRegId] = useState("");
+  const [historyData, setHistoryData] = useState<any[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   const filtered = registrations.filter((r: any) => {
     if (r.archived_at) return false;
@@ -173,11 +181,26 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
 
   const handleChangeStatus = async (reg: Registration, newStatus: string) => {
     try {
-      await updateRegistrationStatus(reg.id, newStatus);
+      await updateRegistrationStatus(reg.id, newStatus, reg.status, user?.id ?? "");
       toast({ title: "Phase mise à jour", description: `${reg.full_name} → ${newStatus}` });
       onRefresh();
     } catch {
       toast({ title: "Erreur", variant: "destructive" });
+    }
+  };
+
+  const handleShowHistory = async (regId: string) => {
+    setHistoryRegId(regId);
+    setHistoryOpen(true);
+    setHistoryLoading(true);
+    try {
+      const data = await fetchPhaseHistory(regId);
+      setHistoryData(data);
+    } catch (err) {
+      console.error(err);
+      setHistoryData([]);
+    } finally {
+      setHistoryLoading(false);
     }
   };
 
@@ -352,6 +375,9 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
                         <CheckCircle className="w-4 h-4 mr-1" />Valider
                       </Button>
                     )}
+                    <Button size="sm" variant="ghost" title="Historique des phases" onClick={() => handleShowHistory(r.id)}>
+                      <History className="w-4 h-4 text-primary" />
+                    </Button>
                     <Button size="sm" variant="ghost" title="Archiver" onClick={() => handleArchive(r)}>
                       <Archive className="w-4 h-4 text-muted-foreground" />
                     </Button>
@@ -389,6 +415,47 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
           </tbody>
         </table>
       </div>
+
+      {/* Phase History Dialog */}
+      <Dialog open={historyOpen} onOpenChange={setHistoryOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <History className="w-5 h-5 text-primary" />
+              Historique des Phases
+            </DialogTitle>
+            <DialogDescription>
+              Transitions de phase pour cette inscription.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="max-h-80 overflow-y-auto space-y-3 py-2">
+            {historyLoading ? (
+              <p className="text-center text-muted-foreground py-4">Chargement...</p>
+            ) : historyData.length === 0 ? (
+              <p className="text-center text-muted-foreground py-4">Aucun changement de phase enregistré</p>
+            ) : (
+              historyData.map((h: any) => (
+                <div key={h.id} className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30 border border-border/50">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className={`px-2 py-0.5 rounded text-xs font-medium ${phaseBadgeColor(h.old_status)}`}>
+                        {h.old_status === "pending" ? "En attente" : h.old_status === "phase1" ? "Phase 1" : h.old_status === "phase2" ? "Phase 2" : h.old_status === "funded" ? "Funded" : "Disqualifié"}
+                      </span>
+                      <span className="text-muted-foreground">→</span>
+                      <span className={`px-2 py-0.5 rounded text-xs font-medium ${phaseBadgeColor(h.new_status)}`}>
+                        {h.new_status === "pending" ? "En attente" : h.new_status === "phase1" ? "Phase 1" : h.new_status === "phase2" ? "Phase 2" : h.new_status === "funded" ? "Funded" : "Disqualifié"}
+                      </span>
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {new Date(h.created_at).toLocaleString("fr-FR")}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
