@@ -171,6 +171,26 @@ const InscriptionsTab = ({ registrations, onRefresh }: Props) => {
     }
   };
 
+  const handleChangeStatus = async (reg: Registration, newStatus: string) => {
+    try {
+      await updateRegistrationStatus(reg.id, newStatus);
+      toast({ title: "Phase mise à jour", description: `${reg.full_name} → ${newStatus}` });
+      onRefresh();
+    } catch {
+      toast({ title: "Erreur", variant: "destructive" });
+    }
+  };
+
+  const phaseStatuses = ["pending", "phase1", "phase2", "funded", "disqualified"] as const;
+
+  const phaseBadgeColor = (s: string) => {
+    if (s === "funded") return "bg-success/20 text-success";
+    if (s === "phase2") return "bg-primary/20 text-primary";
+    if (s === "phase1") return "bg-accent/20 text-accent";
+    if (s === "disqualified") return "bg-destructive/20 text-destructive";
+    return "bg-muted text-muted-foreground";
+  };
+
   const statusBadge = (s: string) => {
     if (s === "paid") return <span className="px-2 py-1 rounded text-xs font-medium bg-success/20 text-success flex items-center gap-1"><CheckCircle className="w-3 h-3" />Payé</span>;
     if (s === "pending") return <span className="px-2 py-1 rounded text-xs font-medium bg-accent/20 text-accent flex items-center gap-1"><Clock className="w-3 h-3" />En attente</span>;
