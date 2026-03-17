@@ -1,1 +1,10 @@
 project_id = "dxrqrrsegmurkfdypnet"
+
+[functions.notify-phase-change]
+verify_jwt = false
+
+[functions.trade-webhook]
+verify_jwt = false
+
+[functions.copy-execute]
+verify_jwt = false
